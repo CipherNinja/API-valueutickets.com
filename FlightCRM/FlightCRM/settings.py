@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-xcfh484+^5mp8a%117h6kigwac1m8tso=f4p%84bqm5wpg$x3!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','gcp.agratasinfotech.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','gcp.agratasinfotech.com','https://11db-42-108-66-9.ngrok-free.app','11db-42-108-66-9.ngrok-free.app']
 
 
 
@@ -61,7 +61,9 @@ MIDDLEWARE = [
 #     r"^http://localhost:\d+$",
 # ]
 
-CORS_ALLOW_ALL_ORIGINS = True  # Allows all origins
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:7008",  # Allow Vue app to access API
+]
 
 CORS_ALLOW_CREDENTIALS = True
 
