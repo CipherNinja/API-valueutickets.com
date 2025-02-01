@@ -5,7 +5,10 @@ from .serializers import AirportSerializer
 from rest_framework.renderers import JSONRenderer
 
 def home(request):
-    return HttpResponse("<h1>API Deployment</h1>") 
+    return render(
+        request,
+        "index.html"
+    ) 
 
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
