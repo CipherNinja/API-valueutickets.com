@@ -57,9 +57,11 @@ MIDDLEWARE = [
 ]
 
 
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^http://localhost:\d+$",
-]
+# CORS_ALLOWED_ORIGIN_REGEXES = [
+#     r"^http://localhost:\d+$",
+# ]
+
+CORS_ALLOW_ALL_ORIGINS = True  # Allows all origins
 
 CORS_ALLOW_CREDENTIALS = True
 
