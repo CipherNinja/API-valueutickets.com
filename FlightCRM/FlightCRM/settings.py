@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-xcfh484+^5mp8a%117h6kigwac1m8tso=f4p%84bqm5wpg$x3!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','gcp.agratasinfotech.com','https://11db-42-108-66-9.ngrok-free.app','11db-42-108-66-9.ngrok-free.app']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','gcp.agratasinfotech.com']
 
 
 
@@ -104,10 +104,10 @@ WSGI_APPLICATION = 'FlightCRM.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'agratasi_valueu',  # Database name from environment variable
-        'USER': 'agratasi_value',  # Database user from environment variable
-        'PASSWORD': 'airtravelove',  # Database password from environment variable
-        'HOST': "103.139.58.237",  # Database host from environment variable
+        'NAME': os.environ['database_name'],  # Database name from environment variable
+        'USER': os.environ['username'],  # Database user from environment variable
+        'PASSWORD': os.environ['password'],  # Database password from environment variable
+        'HOST': "localhost",  # Database host from environment variable
         'PORT': '',  
     }
 }
