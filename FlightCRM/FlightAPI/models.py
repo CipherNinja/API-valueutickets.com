@@ -9,9 +9,6 @@ class Airport(models.Model):
     iata = models.CharField(max_length=3, blank=True, null=True)
     icao = models.CharField(max_length=4, blank=True, null=True)
 
-    class Meta:
-        db_table = 'AirportCodes'  # Ensure Django uses the correct table
-
     def __str__(self):
         return self.airport_name
 
