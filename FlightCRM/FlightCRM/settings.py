@@ -108,7 +108,7 @@ DATABASES = {
         'USER': os.environ.get('username'),  # Database user from environment variable
         'PASSWORD': os.environ.get('password'),  # Database password from environment variable
         'HOST': "localhost",  # Database host from environment variable
-        'PORT': '',  
+        'PORT': 3306,  
     }
 }
 
