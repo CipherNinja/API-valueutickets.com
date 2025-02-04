@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse
 from rest_framework import viewsets
-from .models import Airport
-from .serializers import AirportSerializer, FlightSearchSerializer
+from .models import Airport,Customer,FlightBooking,Passenger,Ticket,Payment
+from .serializers import AirportSerializer, FlightSearchSerializer,FlightBookingCreateSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,6 +15,31 @@ class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
     serializer_class = AirportSerializer
     renderer_classes = [JSONRenderer]  # Specify JSONRenderer only
+
+
+class FlightBookingCreateView(APIView):
+    """
+    Handles POST requests to create a new flight booking along with associated customer, passengers, and payment details.
+    """
+    def post(self, request, *args, **kwargs):
+        # Initialize the serializer with the incoming data
+        serializer = FlightBookingCreateSerializer(data=request.data)
+        
+        # Validate the data
+        if serializer.is_valid():
+            # Save the data and create the records
+            data = serializer.save()
+
+            # Respond with a success message and the IDs of created records
+            return Response({
+                "message": "Booking successful!",
+                "data": data
+            }, status=status.HTTP_201_CREATED)
+
+        # If the data is invalid, return the error messages
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        
 
 
 

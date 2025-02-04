@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Airport
+from .models import Airport,Customer,FlightBooking,Passenger,Ticket,Payment
 
 class AirportSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,22 +19,64 @@ class FlightSearchSerializer(serializers.Serializer):
 
     ticket_class = serializers.ChoiceField(choices=["Economy", "Premium_Economy", "Business", "First"], default="Economy")
 
-    # def validate(self, data):
-    #     adults = data.get('adults', 1)
-    #     children = data.get('children', 0)
-    #     infants = data.get('infants', 0)
-        
-    #     total_passengers = adults + children + infants
-        
-    #     if total_passengers > 9:
-    #         raise serializers.ValidationError("Total number of passengers cannot exceed 9.")
-        
-    #     if infants > adults:
-    #         raise serializers.ValidationError("Each adult can carry only one infant.")
-        
-    #     if children > 8 and adults == 1:
-    #         raise serializers.ValidationError("One adult can carry up to 8 children.")
-        
-    #     return data
-    
 
+
+class FlightBookingCreateSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(max_length=15)
+    email = serializers.EmailField()
+    date = serializers.DateTimeField()
+
+    passengers = serializers.ListField(
+        child=serializers.DictField(), required=True
+    )
+
+    payment = serializers.DictField(required=True)
+
+    flight_cancellation_protection = serializers.BooleanField(default=False)
+    sms_support = serializers.BooleanField(default=False)
+    baggage_protection = serializers.BooleanField(default=False)
+    premium_support = serializers.BooleanField(default=False)
+    total_refund_protection = serializers.BooleanField(default=False)
+    payble_amount = serializers.FloatField(default=795)
+
+    def create(self, validated_data):
+        """
+        Create customer, passengers, payment, and flight booking in one transaction.
+        """
+        # Create or get the Customer
+        customer, created = Customer.objects.get_or_create(
+            email=validated_data['email'],
+            defaults={
+                'phone_number': validated_data['phone_number'],
+                'date': validated_data['date']
+            }
+        )
+
+        # Create Passengers
+        passenger_instances = []
+        for passenger_data in validated_data['passengers']:
+            passenger_instances.append(Passenger.objects.create(customer=customer, **passenger_data))
+
+        # Create Payment
+        payment_data = validated_data['payment']
+        payment = Payment.objects.create(customer=customer, **payment_data)
+
+        # Create Flight Booking
+        booking = FlightBooking.objects.create(
+            customer=customer,
+            payment=payment,
+            flight_cancellation_protection=validated_data['flight_cancellation_protection'],
+            sms_support=validated_data['sms_support'],
+            baggage_protection=validated_data['baggage_protection'],
+            premium_support=validated_data['premium_support'],
+            total_refund_protection=validated_data['total_refund_protection'],
+            payble_amount=validated_data['payble_amount']
+        )
+        booking.passengers.set(passenger_instances)  # Link passengers to the booking
+
+        return {
+            "customer_id": customer.id,
+            "booking_id": booking.id,
+            "payment_id": payment.id,
+            "passenger_ids": [p.id for p in passenger_instances],
+        }
