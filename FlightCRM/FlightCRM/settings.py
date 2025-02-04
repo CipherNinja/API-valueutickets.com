@@ -63,6 +63,8 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:7008",  # Allow Vue app to access API
+    "https://gcpfront.agratasinfotech.com",
+    "http://gcpfront.agratasinfotech.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -111,6 +113,18 @@ DATABASES = {
         'PORT': 3306,  
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': "agratasi_gripchain",  # Database name from environment variable
+#         'USER': 'root',  # Database user from environment variable
+#         'PASSWORD': '9069076975',  # Database password from environment variable
+#         'HOST': "localhost",  # Database host from environment variable
+#         'PORT': 3306,  
+#     }
+# }
 
 
 
