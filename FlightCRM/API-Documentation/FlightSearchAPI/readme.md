@@ -1,4 +1,3 @@
-```markdown
 # Flight Search API
 
 This API is used to fetch flight schedules and fares for a particular date based on the input JSON provided. It supports searching for one-way trips.
@@ -7,9 +6,7 @@ This API is used to fetch flight schedules and fares for a particular date based
 
 The API can be accessed via a POST request at:
 
-```
-/api/v1/flight/search/onewaytrip/
-```
+`/api/v1/flight/search/onewaytrip/`
 
 ## Request
 
@@ -27,7 +24,7 @@ The JSON payload for the POST request should follow this structure:
     "infants": 0,
     "ticket_class": "Economy"
 }
-```
+
 
 ### Fields Description
 
