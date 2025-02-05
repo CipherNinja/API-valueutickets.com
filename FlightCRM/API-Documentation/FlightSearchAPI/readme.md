@@ -24,7 +24,7 @@ The JSON payload for the POST request should follow this structure:
     "infants": 0,
     "ticket_class": "Economy"
 }
-
+```
 
 ### Fields Description
 
