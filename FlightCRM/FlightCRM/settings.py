@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1','gcp.agratasinfotech.com']
 
-
+USE_TZ = True
 
 # Application definition
 
@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'FlightAPI',
-    'corsheaders'
+    'corsheaders',
+    'rangefilter'
 ]
 
 MIDDLEWARE = [

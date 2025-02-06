@@ -1,7 +1,7 @@
 from django.contrib import admin
-from .models import Customer, Passenger, Payment, FlightBooking, Ticket
+from .models import Customer, Passenger, Payment, FlightBooking, Ticket, Airport
 from django import forms
-
+from rangefilter.filters import DateRangeFilter
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
@@ -24,11 +24,23 @@ class PaymentAdmin(admin.ModelAdmin):
 
 @admin.register(FlightBooking)
 class FlightBookingAdmin(admin.ModelAdmin):
-    list_display = ('customer' ,'payment', 'flight_cancellation_protection', 'sms_support', 'baggage_protection', 'premium_support', 'total_refund_protection','payble_amount')
-    list_filter = ('flight_cancellation_protection', 'sms_support', 'baggage_protection', 'premium_support', 'total_refund_protection')
-    search_fields = ('customer__phone_number', 'customer__email', 'payment__cardholder_name')
+    list_display = (
+        'customer', 'payment', 'flight_name', 'departure_iata', 'arrival_iata', 
+        'departure_date', 'arrival_date', 'flight_cancellation_protection', 
+        'sms_support', 'baggage_protection', 'premium_support', 'total_refund_protection', 'payble_amount'
+    )
+    list_filter = (
+        'flight_cancellation_protection','baggage_protection', 
+        'departure_iata', 'arrival_iata',
+        ('departure_date', DateRangeFilter)
+    )
+    search_fields = (
+        'customer__phone_number', 'customer__email', 'payment__cardholder_name', 
+        'flight_name', 'departure_iata', 'arrival_iata'
+    )
     filter_horizontal = ('passengers',)
     autocomplete_fields = ('customer',)
+
 
 
 class TicketAdminForm(forms.ModelForm):

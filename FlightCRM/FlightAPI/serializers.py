@@ -25,7 +25,11 @@ class FlightBookingCreateSerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=15)
     email = serializers.EmailField()
     date = serializers.DateTimeField()
-
+    flight_name = serializers.CharField(max_length=200)
+    departure_iata = serializers.CharField(max_length=4)
+    arrival_iata = serializers.CharField(max_length=4)
+    departure_date = serializers.DateTimeField()
+    arrival_date = serializers.DateTimeField()
     passengers = serializers.ListField(
         child=serializers.DictField(), required=True
     )
@@ -65,6 +69,11 @@ class FlightBookingCreateSerializer(serializers.Serializer):
         booking = FlightBooking.objects.create(
             customer=customer,
             payment=payment,
+            flight_name=validated_data['flight_name'],
+            departure_iata=validated_data['departure_iata'],
+            arrival_iata=validated_data['arrival_iata'],
+            departure_date=validated_data['departure_date'],
+            arrival_date=validated_data['arrival_date'],
             flight_cancellation_protection=validated_data['flight_cancellation_protection'],
             sms_support=validated_data['sms_support'],
             baggage_protection=validated_data['baggage_protection'],

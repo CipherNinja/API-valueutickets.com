@@ -23,8 +23,13 @@ You will need to send a **JSON object** with the following structure:
 ```json
 {
     "phone_number": "+1234567890",
-    "email": "customer@example.com",
-    "date": "2025-02-04T12:00:00Z",
+    "email": "example@email.com",
+    "date": "2025-02-06T14:30:00Z",
+    "flight_name": "Airway Express 123",
+    "departure_iata": "JFK",
+    "arrival_iata": "LAX",
+    "departure_date": "2025-02-10T08:00:00Z",
+    "arrival_date": "2025-02-10T11:00:00Z",
     "passengers": [
         {
             "first_name": "John",

@@ -1,6 +1,5 @@
 from django.db import models
-import datetime
-
+from datetime import datetime
 
 class Airport(models.Model):
     city = models.CharField(max_length=255)
@@ -62,7 +61,12 @@ class FlightBooking(models.Model):
     baggage_protection = models.BooleanField(default=False)
     premium_support = models.BooleanField(default=False)
     total_refund_protection = models.BooleanField(default=False)
-    payble_amount = models.FloatField(default=795,verbose_name="Payable amt.($)")
+    payble_amount = models.FloatField(verbose_name="Payable amt.($)")
+    flight_name = models.CharField(max_length=200)
+    departure_iata = models.CharField(max_length=4)
+    arrival_iata = models.CharField(max_length=4)
+    departure_date = models.DateTimeField()
+    arrival_date = models.DateTimeField()
     def __str__(self):
             return f"${self.payble_amount:.2f} - {self.customer.email}"
     
