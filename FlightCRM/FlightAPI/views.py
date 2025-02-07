@@ -47,7 +47,7 @@ class FlightOnewayTrip(APIView):
     def post(self, request):
         serializer = FlightSearchSerializer(data=request.data)
         if serializer.is_valid():
-            FLIGHT_KEY = os.environ["FLIGHT_API_KEY"]
+            FLIGHT_KEY = os.getenv("FLIGHT_API_KEY")
             source = serializer.validated_data.get('source_iata')
             destination = serializer.validated_data.get('destination_iata')
             date = serializer.validated_data.get('date')
