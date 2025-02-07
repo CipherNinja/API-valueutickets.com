@@ -22,14 +22,14 @@ class FlightSearchSerializer(serializers.Serializer):
 
 
 class FlightBookingCreateSerializer(serializers.Serializer):
-    phone_number = serializers.CharField(max_length=15)
-    email = serializers.EmailField()
-    date = serializers.DateTimeField()
-    flight_name = serializers.CharField(max_length=200)
-    departure_iata = serializers.CharField(max_length=4)
-    arrival_iata = serializers.CharField(max_length=4)
-    departure_date = serializers.DateTimeField()
-    arrival_date = serializers.DateTimeField()
+    phone_number = serializers.CharField(max_length=15,required=True)
+    email = serializers.EmailField(required=True)
+    date = serializers.DateTimeField(required=True)
+    flight_name = serializers.CharField(max_length=200,required=True)
+    departure_iata = serializers.CharField(max_length=4,required=True)
+    arrival_iata = serializers.CharField(max_length=4,required=True)
+    departure_date = serializers.DateTimeField(required=True)
+    arrival_date = serializers.DateTimeField(required=True)
     passengers = serializers.ListField(
         child=serializers.DictField(), required=True
     )
@@ -41,7 +41,7 @@ class FlightBookingCreateSerializer(serializers.Serializer):
     baggage_protection = serializers.BooleanField(default=False)
     premium_support = serializers.BooleanField(default=False)
     total_refund_protection = serializers.BooleanField(default=False)
-    payble_amount = serializers.FloatField(default=795)
+    payble_amount = serializers.FloatField(required=True)
 
     def create(self, validated_data):
         """
