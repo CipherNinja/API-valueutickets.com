@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-xcfh484+^5mp8a%117h6kigwac1m8tso=f4p%84bqm5wpg$x3!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','gcp.agratasinfotech.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','gcp.agratasinfotech.com','crm.valueutickets.com']
 
 USE_TZ = True
 
@@ -107,8 +107,8 @@ WSGI_APPLICATION = 'FlightCRM.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "agratasi_gripper",  # Database name from environment variable
-        'USER': 'agratasi_admin',  # Database user from environment variable
+        'NAME': "valueuti_crmsite",  # Database name from environment variable
+        'USER': 'valueuti_priyesh',  # Database user from environment variable
         'PASSWORD': 'airtravelove',  # Database password from environment variable
         'HOST': "localhost",  # Database host from environment variable
         'PORT': 3306,  
