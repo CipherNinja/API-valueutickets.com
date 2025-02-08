@@ -8,8 +8,6 @@ from rest_framework.response import Response
 from rest_framework import status
 import os
 import requests
-def home(request):
-    return HttpResponse(f"THIS IS API DELIVERY SYSTEM")
 
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()

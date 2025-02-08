@@ -23,11 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-xcfh484+^5mp8a%117h6kigwac1m8tso=f4p%84bqm5wpg$x3!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','gcp.agratasinfotech.com','crm.valueutickets.com','valueutickets.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','crm.valueutickets.com']
 
+# Set timezone to Eastern Standard Time (EST)
+TIME_ZONE = 'America/New_York'
+
+USE_I18N = True
 USE_TZ = True
+
 
 # Application definition
 
@@ -58,14 +63,24 @@ MIDDLEWARE = [
 ]
 
 
-# CORS_ALLOWED_ORIGIN_REGEXES = [
-#     r"^http://localhost:\d+$",
-# ]
+# # Security settings
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents browsers from MIME-sniffing files
+SECURE_BROWSER_XSS_FILTER = True    # Enables XSS filtering by the browser
+
+# Enforce HTTPS
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_SECONDS = 31536000  # 1 year; adjust based on preference
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# # Clickjacking protection
+X_FRAME_OPTIONS = 'DENY'
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:7008",  # Allow Vue app to access API
-    "https://gcpfront.agratasinfotech.com",
-    "http://gcpfront.agratasinfotech.com"
+    "https://valueutickets.com",
+    "http://valueutickets.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -154,18 +169,17 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'Fligh' / 'FrontEnd' / 'static',
+# ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

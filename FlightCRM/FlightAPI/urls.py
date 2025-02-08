@@ -7,7 +7,6 @@ router.register(r'airports', views.AirportViewSet)
 
 
 urlpatterns = [
-    path('', views.home, name='home'),
     path('api/v1/', include(router.urls)),
     path('api/v2/flight/booking/', views.FlightBookingCreateView.as_view(), name='flight-booking-create'),
     path('api/v1/flight/search/onewaytrip/',views.FlightOnewayTrip.as_view(),name="onewaytrip")
