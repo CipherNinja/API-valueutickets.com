@@ -132,8 +132,8 @@ WSGI_APPLICATION = 'FlightCRM.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "valueuti_valueuticktes",  # Database name from environment variable
-        'USER': 'valueuti_priyesh',  # Database user from environment variable
+        'NAME': "valueuti_valueutickte",  # Database name from environment variable
+        'USER': 'valueuti_value',  # Database user from environment variable
         'PASSWORD': 'airtravelove',  # Database password from environment variable
         'HOST': "localhost",  # Database host from environment variable
         'PORT': 3306,  
