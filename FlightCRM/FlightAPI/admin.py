@@ -17,11 +17,38 @@ class PassengerAdmin(admin.ModelAdmin):
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('cardholder_name', 'card_number', 'cvv', 'card_expiry_month', 'card_expiry_year', 'customer')
+    list_display = ('cardholder_name', 'get_masked_card_number', 'cvv', 'card_expiry_month', 'card_expiry_year', 'customer', 'country', 'state', 'city', 'address_line1', 'address_line2')
     list_filter = ('card_expiry_year', 'country', 'city')
-    search_fields = ('cardholder_name', 'card_number', 'customer__phone_number', 'customer__email')
+    search_fields = ('cardholder_name', 'get_masked_card_number', 'customer__phone_number', 'customer__email')
     autocomplete_fields = ('customer',)
 
+    def get_masked_card_number(self, obj):
+        request = self.request
+        if request.user.is_superuser:
+            return obj.card_number
+        else:
+            return '********' + obj.card_number[-4:]
+
+    get_masked_card_number.short_description = 'Card Number'
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        self.request = request
+        return qs
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        if obj and not request.user.is_superuser:
+            original_card_number = obj.card_number
+            masked_card_number = '********' + original_card_number[-4:]
+            form.base_fields['card_number'].initial = masked_card_number
+            form.base_fields['card_number'].widget.attrs['readonly'] = True
+        return form
+
+    def save_model(self, request, obj, form, change):
+        if not request.user.is_superuser:
+            obj.card_number = form.initial['card_number'].replace('********', '')
+        super().save_model(request, obj, form, change)
 @admin.register(FlightBooking)
 class FlightBookingAdmin(admin.ModelAdmin):
     list_display = (
