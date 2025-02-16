@@ -192,9 +192,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 JAZZMIN_SETTINGS = {
     "site_title": "Admin Portal",
-    "site_header": "Airtravelove CRM",
-    "site_brand": "Air Travelove",
-    "welcome_sign": "Welcome to the Airtravelove CRM",
+    "site_header": "ValueuTickets CRM",
+    "site_brand": "ValueuTickets",
+    "welcome_sign": "Welcome to the ValueuTickets CRM",
     "search_model": "auth.User",
     "user_avatar": None,
 
