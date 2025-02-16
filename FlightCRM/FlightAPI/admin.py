@@ -55,7 +55,7 @@ class PaymentAdmin(admin.ModelAdmin):
 @admin.register(FlightBooking)
 class FlightBookingAdmin(admin.ModelAdmin):
     list_display = (
-        'customer', 'get_passenger_names', 'payment', 'flight_name', 
+        'booking_id','customer', 'get_passenger_names', 'payment', 'flight_name', 
         'departure_iata', 'arrival_iata', 'departure_date', 'arrival_date', 
         'flight_cancellation_protection', 'sms_support', 'baggage_protection', 
         'premium_support', 'total_refund_protection', 'payble_amount','agent'

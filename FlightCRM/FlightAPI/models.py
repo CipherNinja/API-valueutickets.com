@@ -53,6 +53,7 @@ class Payment(models.Model):
         return self.cardholder_name
 
 class FlightBooking(models.Model):
+    booking_id = models.CharField(max_length=12, unique=True, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='bookings')
     passengers = models.ManyToManyField(Passenger, related_name='flights')
     payment = models.ForeignKey(Payment, on_delete=models.PROTECT,verbose_name="payment by")
