@@ -63,18 +63,28 @@ MIDDLEWARE = [
 ]
 
 
-# # Security settings
+# Security settings
 SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents browsers from MIME-sniffing files
 SECURE_BROWSER_XSS_FILTER = True    # Enables XSS filtering by the browser
 
-# Enforce HTTPS
+Enforce HTTPS
 SECURE_SSL_REDIRECT = True
 SECURE_HSTS_SECONDS = 31536000  # 1 year; adjust based on preference
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-# # Clickjacking protection
+# Clickjacking protection
 X_FRAME_OPTIONS = 'DENY'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.valueutickets.com'
+EMAIL_PORT = 465  
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'customerservice@valueutickets.com'
+EMAIL_HOST_PASSWORD = r"}(UM93%Y(5T^" 
+DEFAULT_FROM_EMAIL = 'customerservice@valueutickets.com'
+# Set EMAIL_USE_TLS = False since you're using SSL (port 465)
+EMAIL_USE_TLS = False
+
 
 
 CORS_ALLOWED_ORIGINS = [
@@ -133,12 +143,12 @@ DATABASES = {
 
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': "agratasi_gripchain",  # Database name from environment variable
-#         'USER': 'root',  # Database user from environment variable
-#         'PASSWORD': '9069076975',  # Database password from environment variable
-#         'HOST': "localhost",  # Database host from environment variable
-#         'PORT': 3306,  
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',  # Database name from environment variable
+#         # 'USER': 'root',  # Database user from environment variable
+#         # 'PASSWORD': '9069076975',  # Database password from environment variable
+#         # 'HOST': "localhost",  # Database host from environment variable
+#         # 'PORT': 3306,  
 #     }
 # }
 
