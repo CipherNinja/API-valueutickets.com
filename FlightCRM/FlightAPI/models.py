@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import datetime
-
+from django.contrib.auth.models import User
 class Airport(models.Model):
     city = models.CharField(max_length=255)
     airport_name = models.CharField(max_length=255) 
@@ -67,8 +67,10 @@ class FlightBooking(models.Model):
     arrival_iata = models.CharField(max_length=4)
     departure_date = models.DateTimeField()
     arrival_date = models.DateTimeField()
+    agent = models.ForeignKey(User,on_delete=models.CASCADE, related_name="user",default=1)
     def __str__(self):
-            return f"${self.payble_amount:.2f} - {self.customer.email}"
+        passenger_names = ', '.join([f"{p.first_name} {p.middle_name} {p.last_name}".replace("  ", " ") for p in self.passengers.all()])
+        return f"{self.customer.email} - Passengers: {passenger_names}"
     
 
 class Ticket(models.Model):

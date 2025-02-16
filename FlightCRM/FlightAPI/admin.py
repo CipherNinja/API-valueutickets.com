@@ -49,24 +49,38 @@ class PaymentAdmin(admin.ModelAdmin):
         if not request.user.is_superuser:
             obj.card_number = form.initial['card_number'].replace('********', '')
         super().save_model(request, obj, form, change)
+
+
+
 @admin.register(FlightBooking)
 class FlightBookingAdmin(admin.ModelAdmin):
     list_display = (
-        'customer', 'payment', 'flight_name', 'departure_iata', 'arrival_iata', 
-        'departure_date', 'arrival_date', 'flight_cancellation_protection', 
-        'sms_support', 'baggage_protection', 'premium_support', 'total_refund_protection', 'payble_amount'
+        'customer', 'get_passenger_names', 'payment', 'flight_name', 
+        'departure_iata', 'arrival_iata', 'departure_date', 'arrival_date', 
+        'flight_cancellation_protection', 'sms_support', 'baggage_protection', 
+        'premium_support', 'total_refund_protection', 'payble_amount','agent'
     )
     list_filter = (
-        'flight_cancellation_protection','baggage_protection', 
-        'departure_iata', 'arrival_iata',
+        'customer','payment__cardholder_name','departure_iata', 'arrival_iata',
         ('departure_date', DateRangeFilter)
     )
-    search_fields = (
-        'customer__phone_number', 'customer__email', 'payment__cardholder_name', 
-        'flight_name', 'departure_iata', 'arrival_iata'
-    )
+    # search_fields = (
+    #     'customer__phone_number', 'customer__email', 'payment__cardholder_name', 
+    #     'flight_name', 'departure_iata', 'arrival_iata',
+
+    # )
     filter_horizontal = ('passengers',)
     autocomplete_fields = ('customer',)
+
+    def get_passenger_names(self, obj):
+        return ', '.join([f"{p.first_name} {p.middle_name} {p.last_name}".replace("  ", " ") for p in obj.passengers.all()])
+    get_passenger_names.short_description = 'Passengers'
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        if not request.user.is_superuser:
+            form.base_fields['agent'].disabled = True
+        return form
 
 
 
