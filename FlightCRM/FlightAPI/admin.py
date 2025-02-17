@@ -81,6 +81,11 @@ class FlightBookingAdmin(admin.ModelAdmin):
         if not request.user.is_superuser:
             form.base_fields['agent'].disabled = True
         return form
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(agent=request.user)
 
 
 
