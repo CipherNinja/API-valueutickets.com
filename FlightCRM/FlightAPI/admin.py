@@ -71,6 +71,7 @@ class FlightBookingAdmin(admin.ModelAdmin):
     # )
     filter_horizontal = ('passengers',)
     autocomplete_fields = ('customer',)
+    readonly_fields = ('booking_id',)
 
     def get_passenger_names(self, obj):
         return ', '.join([f"{p.first_name} {p.middle_name} {p.last_name}".replace("  ", " ") for p in obj.passengers.all()])
