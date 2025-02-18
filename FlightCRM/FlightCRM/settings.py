@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-xcfh484+^5mp8a%117h6kigwac1m8tso=f4p%84bqm5wpg$x3!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1','crm.valueutickets.com']
 
@@ -47,8 +47,16 @@ INSTALLED_APPS = [
     'rest_framework',
     'FlightAPI',
     'corsheaders',
-    'rangefilter'
+    'rangefilter',
+    'rest_framework_simplejwt',
 ]
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -75,6 +83,7 @@ SECURE_HSTS_PRELOAD = True
 
 # Clickjacking protection
 X_FRAME_OPTIONS = 'DENY'
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.valueutickets.com'
 EMAIL_PORT = 465  
@@ -150,7 +159,7 @@ DATABASES = {
 #         # 'HOST': "localhost",  # Database host from environment variable
 #         # 'PORT': 3306,  
 #     }
-# }
+}
 
 
 

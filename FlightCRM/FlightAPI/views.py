@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse
 from rest_framework import viewsets
 from .models import Airport,Customer,FlightBooking,Passenger,Payment
-from .serializers import AirportSerializer, FlightSearchSerializer,FlightBookingCreateSerializer
+from .serializers import AirportSerializer, FlightSearchSerializer,FlightBookingCreateSerializer,BookingLoginSerializer,FlightBookingSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,6 +11,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import requests
+from rest_framework.permissions import IsAuthenticated
 
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
@@ -28,7 +29,6 @@ class FlightBookingCreateView(APIView):
         
         # Validate the data
         if serializer.is_valid():
-            data = serializer.save()
             
             customer_email = serializer.validated_data['email']
             passengers = serializer.validated_data['passengers']
@@ -69,11 +69,28 @@ class FlightBookingCreateView(APIView):
             email.send()
 
             return Response({
-                "message": "Booking successful!",
-                "data": data
+                "message": "Booking successful!"
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class BookingLoginView(APIView):
+    """
+    This API handles customer login and returns a JWT token along with booking details.
+    """
+    def post(self, request):
+        serializer = BookingLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            token_data = serializer.save()
+            booking_serializer = FlightBookingSerializer(token_data['booking'])
+            return Response({
+                'refresh': token_data['refresh'],
+                'access': token_data['access'],
+                'booking_data': booking_serializer.data
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        
 
 
 class FlightOnewayTrip(APIView):

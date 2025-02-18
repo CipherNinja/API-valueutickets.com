@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import Airport,Customer,FlightBooking,Passenger,Ticket,Payment
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 class AirportSerializer(serializers.ModelSerializer):
     class Meta:
@@ -89,3 +91,45 @@ class FlightBookingCreateSerializer(serializers.Serializer):
             "payment_id": payment.id,
             "passenger_ids": [p.id for p in passenger_instances],
         }
+
+
+
+class BookingLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    booking_id = serializers.CharField(max_length=20)
+
+    def validate(self, data):
+        email = data.get('email')
+        booking_id = data.get('booking_id')
+
+        try:
+            customer = Customer.objects.get(email=email)
+            booking = FlightBooking.objects.get(booking_id=booking_id, customer=customer)
+        except Customer.DoesNotExist:
+            raise serializers.ValidationError("Customer with this email does not exist.")
+        except FlightBooking.DoesNotExist:
+            raise serializers.ValidationError("No booking found for this booking ID and email.")
+        
+        data['customer'] = customer
+        data['booking'] = booking
+        return data
+
+    def create(self, validated_data):
+        customer = validated_data['customer']
+        booking = validated_data['booking']
+        refresh = RefreshToken.for_user(customer)
+
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+            'booking': booking,
+        }
+
+class FlightBookingSerializer(serializers.ModelSerializer):
+    customer = serializers.StringRelatedField()
+    passengers = serializers.StringRelatedField(many=True)
+    payment = serializers.StringRelatedField()
+    
+    class Meta:
+        model = FlightBooking
+        fields = '__all__'
