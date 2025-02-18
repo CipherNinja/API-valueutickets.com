@@ -73,17 +73,17 @@ MIDDLEWARE = [
 
 
 # Security settings
-SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents browsers from MIME-sniffing files
-SECURE_BROWSER_XSS_FILTER = True    # Enables XSS filtering by the browser
+# SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevents browsers from MIME-sniffing files
+# SECURE_BROWSER_XSS_FILTER = True    # Enables XSS filtering by the browser
 
-# Enforce HTTPS
-SECURE_SSL_REDIRECT = True
-SECURE_HSTS_SECONDS = 31536000  # 1 year; adjust based on preference
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+# # Enforce HTTPS
+# SECURE_SSL_REDIRECT = True
+# SECURE_HSTS_SECONDS = 31536000  # 1 year; adjust based on preference
+# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+# SECURE_HSTS_PRELOAD = True
 
-# Clickjacking protection
-X_FRAME_OPTIONS = 'DENY'
+# # Clickjacking protection
+# X_FRAME_OPTIONS = 'DENY'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.valueutickets.com'
@@ -139,28 +139,28 @@ WSGI_APPLICATION = 'FlightCRM.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': "valueuti_valueuticket",  # Database name from environment variable
-        'USER': 'valueuti_value',  # Database user from environment variable
-        'PASSWORD': 'airtravelove',  # Database password from environment variable
-        'HOST': "localhost",  # Database host from environment variable
-        'PORT': 3306,  
-    }
-}
-
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',  # Database name from environment variable
-#         # 'USER': 'root',  # Database user from environment variable
-#         # 'PASSWORD': '9069076975',  # Database password from environment variable
-#         # 'HOST': "localhost",  # Database host from environment variable
-#         # 'PORT': 3306,  
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': "valueuti_valueuticket",  # Database name from environment variable
+#         'USER': 'valueuti_value',  # Database user from environment variable
+#         'PASSWORD': 'airtravelove',  # Database password from environment variable
+#         'HOST': "localhost",  # Database host from environment variable
+#         'PORT': 3306,  
 #     }
 # }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',  # Database name from environment variable
+        # 'USER': 'root',  # Database user from environment variable
+        # 'PASSWORD': '9069076975',  # Database password from environment variable
+        # 'HOST': "localhost",  # Database host from environment variable
+        # 'PORT': 3306,  
+    }
+}
 
 
 
@@ -257,3 +257,13 @@ JAZZMIN_UI_TWEAKS = {
     }
 }
 
+# DRF Configuration (if necessary)
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}

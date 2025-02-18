@@ -53,6 +53,19 @@ class Payment(models.Model):
         return self.cardholder_name
 
 class FlightBooking(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('cancelled', 'Cancelled'),
+        ('c.auth request', 'C.Auth Request'),
+        ('in_progress', 'In Progress'),
+        ('on_hold', 'On Hold'),
+        ('completed', 'Completed'),
+        ('awaiting_payment', 'Awaiting Payment'),
+        ('refunded', 'Refunded'),
+        ('rebooked', 'Rebooked'),
+        ('failed', 'Failed'),
+    ]
     booking_id = models.CharField(max_length=12, unique=True, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='bookings')
     passengers = models.ManyToManyField(Passenger, related_name='flights')
@@ -69,6 +82,10 @@ class FlightBooking(models.Model):
     departure_date = models.DateTimeField()
     arrival_date = models.DateTimeField()
     agent = models.ForeignKey(User,on_delete=models.CASCADE, related_name="user",default=1)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    update_customer_about_changes = models.BooleanField(default=False)
+    customer_approval_status = models.CharField(max_length=20,choices=[('approved','Approved'),('denied','Denied'),("na","NA")],default='na')
+
     def __str__(self):
         passenger_names = ', '.join([f"{p.first_name} {p.middle_name} {p.last_name}".replace("  ", " ") for p in self.passengers.all()])
         return f"{self.customer.email} - Passengers: {passenger_names}"

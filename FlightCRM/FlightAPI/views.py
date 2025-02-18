@@ -12,6 +12,8 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 import requests
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
+
 
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
@@ -150,3 +152,20 @@ class FlightOnewayTrip(APIView):
                 return Response({"error": "Failed to fetch flight data"}, status=response.status_code)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CustomerResponseView(APIView):
+    
+    def get(self, request, booking_id, email_id, customer_response):
+        booking = get_object_or_404(FlightBooking, booking_id=booking_id, customer__email=email_id)
+        
+        if customer_response == 'accept':
+            booking.customer_approval_status = 'approved'
+        elif customer_response == 'reject':
+            booking.customer_approval_status = 'denied'
+        else:
+            return HttpResponse(f'HTTP_400_BAD_REQUEST | Permission Denied')
+        
+        booking.save()
+        
+        return HttpResponse(f'Booking changes {customer_response}ed successfully')

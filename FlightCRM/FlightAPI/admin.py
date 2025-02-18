@@ -64,14 +64,10 @@ class FlightBookingAdmin(admin.ModelAdmin):
         'customer','payment__cardholder_name','departure_iata', 'arrival_iata',
         ('departure_date', DateRangeFilter)
     )
-    # search_fields = (
-    #     'customer__phone_number', 'customer__email', 'payment__cardholder_name', 
-    #     'flight_name', 'departure_iata', 'arrival_iata',
 
-    # )
     filter_horizontal = ('passengers',)
     autocomplete_fields = ('customer',)
-    readonly_fields = ('booking_id',)
+    readonly_fields = ('booking_id','customer_approval_status')
 
     def get_passenger_names(self, obj):
         return ', '.join([f"{p.first_name} {p.middle_name} {p.last_name}".replace("  ", " ") for p in obj.passengers.all()])
