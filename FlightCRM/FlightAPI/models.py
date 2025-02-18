@@ -83,7 +83,7 @@ class FlightBooking(models.Model):
     arrival_date = models.DateTimeField()
     agent = models.ForeignKey(User,on_delete=models.CASCADE, related_name="user",default=1)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    update_customer_about_changes = models.BooleanField(default=False)
+    # update_customer_about_changes = models.BooleanField(default=False)
     customer_approval_status = models.CharField(max_length=20,choices=[('approved','Approved'),('denied','Denied'),("na","NA")],default='na')
 
     def __str__(self):
