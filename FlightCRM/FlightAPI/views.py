@@ -110,11 +110,16 @@ class FlightOnewayTrip(APIView):
             children = serializer.validated_data.get('children')
             infant = serializer.validated_data.get('infant')
             ticket_class = serializer.validated_data.get("ticket_class")
-            
-            
+
             api_url = f"https://api.flightapi.io/onewaytrip/{FLIGHT_KEY}/{source}/{destination}/{date}/{adults}/{children}/{infant}/{ticket_class}/USD"
-            response = requests.get(api_url)
-            
+            try:
+                response = requests.get(api_url)
+                response.raise_for_status()  # Raise an HTTPError for bad responses
+            except requests.exceptions.HTTPError as http_err:
+                return Response({"error": f"HTTP error occurred: {http_err}"}, status=response.status_code)
+            except Exception as err:
+                return Response({"error": f"An error occurred: {err}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
             if response.status_code == 200:
                 data = response.json()
                 
@@ -155,7 +160,6 @@ class FlightOnewayTrip(APIView):
                 return Response({"error": "Failed to fetch flight data"}, status=response.status_code)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class CustomerResponseView(APIView):
     
