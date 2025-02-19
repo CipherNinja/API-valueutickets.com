@@ -2,6 +2,12 @@ from django.contrib import admin
 from .models import Customer, Passenger, Payment, FlightBooking, Ticket, Airport
 from django import forms
 from rangefilter.filters import DateRangeFilter
+from django.contrib import admin
+from django.contrib.admin.models import LogEntry
+from datetime import timedelta
+from django.utils.timezone import now
+from django.utils.html import format_html
+
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
@@ -58,11 +64,11 @@ class FlightBookingAdmin(admin.ModelAdmin):
         'booking_id','customer', 'get_passenger_names', 'payment', 'flight_name', 
         'departure_iata', 'arrival_iata', 'departure_date', 'arrival_date', 
         'flight_cancellation_protection', 'sms_support', 'baggage_protection', 
-        'premium_support', 'total_refund_protection', 'payble_amount','agent'
+        'premium_support', 'total_refund_protection', 'payble_amount','agent','status','customer_approval_status',
     )
     list_filter = (
-        'customer','payment__cardholder_name','departure_iata', 'arrival_iata',
-        ('departure_date', DateRangeFilter)
+        'customer','payment__cardholder_name','departure_iata', 'arrival_iata','status','customer_approval_status',
+        # ('departure_date', DateRangeFilter)
     )
 
     filter_horizontal = ('passengers',)
@@ -83,7 +89,6 @@ class FlightBookingAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         return qs.filter(agent=request.user)
-
 
 
 class TicketAdminForm(forms.ModelForm):
@@ -109,3 +114,25 @@ class TicketAdmin(admin.ModelAdmin):
             'description': 'This feature allows you to send tickets via email in a professional format. Ensure that the information is accurate as it represents official communication.',
         }),
     )
+
+
+class LogEntryAdmin(admin.ModelAdmin):
+    list_display = ('action_time', 'user', 'content_type', 'object_repr', 'action_flag', 'change_message')
+    search_fields = ('object_repr', 'change_message')
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        today = now().date()
+        yesterday = today - timedelta(days=1)
+        return queryset.filter(action_time__date__in=[today, yesterday])
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+admin.site.register(LogEntry, LogEntryAdmin)
