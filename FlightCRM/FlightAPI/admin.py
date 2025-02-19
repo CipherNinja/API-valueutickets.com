@@ -116,6 +116,9 @@ class TicketAdmin(admin.ModelAdmin):
     )
 
 
+LogEntry._meta.verbose_name = ("Track Staff Activity")
+LogEntry._meta.verbose_name_plural = ("Track Staff Activities")
+
 class LogEntryAdmin(admin.ModelAdmin):
     list_display = ('action_time', 'user', 'content_type', 'object_repr', 'action_flag', 'change_message')
     search_fields = ('object_repr', 'change_message')
