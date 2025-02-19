@@ -1,7 +1,7 @@
 from django.shortcuts import render, HttpResponse
 from rest_framework import viewsets
+from .serializers import AirportSerializer, FlightSearchSerializer,FlightBookingCreateSerializer,FlightBookingSerializer
 from .models import Airport,Customer,FlightBooking,Passenger,Payment
-from .serializers import AirportSerializer, FlightSearchSerializer,FlightBookingCreateSerializer,BookingLoginSerializer,FlightBookingSerializer
 from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -13,7 +13,7 @@ from django.utils.html import strip_tags
 import requests
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-
+from django.contrib.auth import authenticate
 
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
@@ -76,21 +76,24 @@ class FlightBookingCreateView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class BookingLoginView(APIView):
-    """
-    This API handles customer login and returns a JWT token along with booking details.
-    """
-    def post(self, request):
-        serializer = BookingLoginSerializer(data=request.data)
-        if serializer.is_valid():
-            token_data = serializer.save()
-            booking_serializer = FlightBookingSerializer(token_data['booking'])
-            return Response({
-                'refresh': token_data['refresh'],
-                'access': token_data['access'],
-                'booking_data': booking_serializer.data
-            }, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class LoginView(APIView):
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        booking_id = request.data.get('booking_id')
+        
+        if not email or not booking_id:
+            return Response({"error": "Please provide both email and booking ID"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            customer = Customer.objects.get(email=email)
+            booking = FlightBooking.objects.get(booking_id=booking_id, customer=customer)
+        except Customer.DoesNotExist:
+            return Response({"error": "Customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        except FlightBooking.DoesNotExist:
+            return Response({"error": "Booking does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = FlightBookingSerializer(booking)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
         
 

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Airport,Customer,FlightBooking,Passenger,Ticket,Payment
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from datetime import date
 
 class AirportSerializer(serializers.ModelSerializer):
     class Meta:
@@ -94,42 +94,62 @@ class FlightBookingCreateSerializer(serializers.Serializer):
 
 
 
-class BookingLoginSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    booking_id = serializers.CharField(max_length=20)
+class PassengerSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    age = serializers.SerializerMethodField()
 
-    def validate(self, data):
-        email = data.get('email')
-        booking_id = data.get('booking_id')
+    class Meta:
+        model = Passenger
+        fields = ['name', 'dob', 'gender', 'age']
 
-        try:
-            customer = Customer.objects.get(email=email)
-            booking = FlightBooking.objects.get(booking_id=booking_id, customer=customer)
-        except Customer.DoesNotExist:
-            raise serializers.ValidationError("Customer with this email does not exist.")
-        except FlightBooking.DoesNotExist:
-            raise serializers.ValidationError("No booking found for this booking ID and email.")
-        
-        data['customer'] = customer
-        data['booking'] = booking
-        return data
+    def get_name(self, obj):
+        return f"{obj.first_name} {obj.middle_name} {obj.last_name}".replace("  ", " ")
 
-    def create(self, validated_data):
-        customer = validated_data['customer']
-        booking = validated_data['booking']
-        refresh = RefreshToken.for_user(customer)
+    def get_age(self, obj):
+        today = date.today()
+        return today.year - obj.dob.year - ((today.month, today.day) < (obj.dob.month, obj.dob.day))
 
-        return {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-            'booking': booking,
-        }
+class PaymentSerializer(serializers.ModelSerializer):
+    card_number_last4 = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Payment
+        fields = ['cardholder_name', 'card_number_last4']
+
+    def get_card_number_last4(self, obj):
+        return obj.card_number[-4:]
+
+class CustomerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ['email', 'phone_number']
 
 class FlightBookingSerializer(serializers.ModelSerializer):
-    customer = serializers.StringRelatedField()
-    passengers = serializers.StringRelatedField(many=True)
-    payment = serializers.StringRelatedField()
-    
+    passenger = PassengerSerializer(many=True, source='passengers')
+    contact_billings = serializers.SerializerMethodField()
+    orderings = serializers.SerializerMethodField()
+
     class Meta:
         model = FlightBooking
-        fields = '__all__'
+        fields = ['flight_name', 'departure_iata', 'arrival_iata', 'departure_date', 'arrival_date', 'passenger', 'contact_billings', 'orderings']
+
+    def get_contact_billings(self, obj):
+        customer = obj.customer
+        payment = obj.payment
+        return {
+            "Email": customer.email,
+            "phone_number": customer.phone_number,
+            "cardholder_name": payment.cardholder_name,
+            "card_number": payment.card_number[-4:]
+        }
+
+    def get_orderings(self, obj):
+        return {
+            "payble_amount": obj.payble_amount,
+            "flight_cancellation_protection": 15 if obj.flight_cancellation_protection else 0,
+            "sms_support": 2 if obj.sms_support else 0,
+            "baggage_protection": 15 if obj.baggage_protection else 0,
+            "premium_support": 5 if obj.premium_support else 0,
+            "total_refund_protection": 100 if obj.total_refund_protection else 0,
+            "total_amount": obj.payble_amount + (15 if obj.flight_cancellation_protection else 0) + (2 if obj.sms_support else 0) + (15 if obj.baggage_protection else 0) + (5 if obj.premium_support else 0) + (100 if obj.total_refund_protection else 0)
+        }
