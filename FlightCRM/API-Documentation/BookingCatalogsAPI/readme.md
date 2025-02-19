@@ -16,7 +16,7 @@ This API allows users to log in using their customer data and flight booking dat
 Content-Type: application/json
 
 **Body:**
-```
+
 ```json
 {
     "email": "priyesh.kumarjii@gmail.com",
