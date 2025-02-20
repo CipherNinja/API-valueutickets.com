@@ -1,6 +1,10 @@
 from django.db import models
 from datetime import datetime
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from datetime import date
+
 class Airport(models.Model):
     city = models.CharField(max_length=255)
     airport_name = models.CharField(max_length=255) 
@@ -10,7 +14,6 @@ class Airport(models.Model):
 
     def __str__(self):
         return self.airport_name
-
 
 
 class Customer(models.Model):
@@ -35,6 +38,16 @@ class Passenger(models.Model):
         full_name = f"{self.first_name} {self.middle_name} {self.last_name}".replace("  ", " ")
         return f"{full_name} - {self.customer.email}"
 
+    def get_age(self):
+        today = date.today()
+        age = today.year - self.dob.year - ((today.month, today.day) < (self.dob.month, self.dob.day))
+        if age < 1:
+            months = (today.year - self.dob.year) * 12 + today.month - self.dob.month
+            if today.day < self.dob.day:
+                months -= 1
+            return f"{months} months"
+        return f"{age} years"
+
 class Payment(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='payments')
     address_line1 = models.CharField(max_length=255)
@@ -51,6 +64,38 @@ class Payment(models.Model):
 
     def __str__(self):
         return self.cardholder_name
+
+    def clean(self):
+        # Validate card number length
+        if len(self.card_number) != 16:
+            raise ValidationError(_('Card number must be exactly 16 digits long.'))
+        
+        # Validate card expiry year format
+        if len(str(self.card_expiry_year)) != 4:
+            raise ValidationErr̥r̥ror(_('Card expiry year must be a 4-digit number Example: 2024, 2030, etc.'))
+        
+        # Validate card expiry month
+        if self.card_expiry_month < 1 or self.card_expiry_month > 12:
+            raise ValidationError(_('Card expiry month must be between 1 and 12.'))
+        
+        # Validate card expiry date
+        current_year = datetime.now().year
+        current_month = datetime.now().month
+        if self.card_expiry_year < current_year or (self.card_expiry_year == current_year and self.card_expiry_month < current_month):
+            raise ValidationError(_('Card expiry date must be in the future.'))
+        
+        # Validate CVV length
+        if len(str(self.cvv)) not in [3, 4]:
+            raise ValidationError(_('CVV must be either 3 or 4 digits long.'))
+        
+        # Validate postal code length (you can adjust this based on specific country's format)
+        if len(self.postal_code) < 5 or len(self.postal_code) > 10:
+            raise ValidationError(_('Postal code must be between 5 and 10 characters long.'))
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super(Payment, self).save(*args, **kwargs)
+
 
 class FlightBooking(models.Model):
     STATUS_CHOICES = [
@@ -89,7 +134,7 @@ class FlightBooking(models.Model):
     def __str__(self):
         passenger_names = ', '.join([f"{p.first_name} {p.middle_name} {p.last_name}".replace("  ", " ") for p in self.passengers.all()])
         return f"{self.customer.email} - Passengers: {passenger_names}"
-    
+
 
 class Ticket(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='tickets')

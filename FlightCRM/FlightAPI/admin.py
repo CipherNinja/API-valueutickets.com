@@ -11,21 +11,35 @@ from django.utils.html import format_html
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('phone_number', 'email', 'date')
-    search_fields = ('phone_number', 'email', 'date')
+    list_display = ('phone_number', 'email', 'date', 'get_booking_ids')
+    search_fields = ('phone_number', 'email', 'date', 'bookings__booking_id')
+
+    def get_booking_ids(self, obj):
+        bookings = obj.bookings.all()
+        return ', '.join([booking.booking_id for booking in bookings])
+    get_booking_ids.short_description = 'Booking IDs'
 
 @admin.register(Passenger)
 class PassengerAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'middle_name', 'last_name', 'dob', 'gender', 'customer')
-    list_filter = ('gender', 'dob')
-    search_fields = ('first_name', 'last_name', 'customer__phone_number', 'customer__email')
+    list_display = ('get_booking_ids','first_name', 'middle_name', 'last_name', 'dob', 'gender', 'customer', 'get_age')
+    list_filter = ('gender', 'dob', 'flights__booking_id')
+    search_fields = ('first_name', 'last_name', 'customer__phone_number', 'customer__email', 'flights__booking_id')
     autocomplete_fields = ('customer',)
+
+    def get_booking_ids(self, obj):
+        bookings = obj.flights.all()
+        return ', '.join([booking.booking_id for booking in bookings])
+    get_booking_ids.short_description = 'Booking IDs'
+
+    def get_age(self, obj):
+        return obj.get_age()
+    get_age.short_description = 'Age'
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('cardholder_name', 'get_masked_card_number', 'cvv', 'card_expiry_month', 'card_expiry_year', 'customer', 'country', 'state', 'city', 'address_line1', 'address_line2')
-    list_filter = ('card_expiry_year', 'country', 'city')
-    search_fields = ('cardholder_name', 'get_masked_card_number', 'customer__phone_number', 'customer__email')
+    list_display = ('get_booking_ids','cardholder_name', 'get_masked_card_number', 'cvv', 'card_expiry_month', 'card_expiry_year', 'customer', 'country', 'state', 'city', 'address_line1', 'address_line2')
+    list_filter = ('card_expiry_year', 'country', 'city', 'flightbooking__booking_id')
+    search_fields = ('cardholder_name', 'customer__phone_number', 'customer__email', 'flightbooking__booking_id')
     autocomplete_fields = ('customer',)
 
     def get_masked_card_number(self, obj):
@@ -37,10 +51,17 @@ class PaymentAdmin(admin.ModelAdmin):
 
     get_masked_card_number.short_description = 'Card Number'
 
+    def get_booking_ids(self, obj):
+        bookings = FlightBooking.objects.filter(payment=obj)
+        return ', '.join([booking.booking_id for booking in bookings])
+    
+    get_booking_ids.short_description = 'Booking IDs'
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         self.request = request
         return qs
+    
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -67,16 +88,22 @@ class FlightBookingAdmin(admin.ModelAdmin):
         'premium_support', 'total_refund_protection', 'payble_amount','agent','status','customer_approval_status',
     )
     list_filter = (
-        'customer','payment__cardholder_name','departure_iata', 'arrival_iata','status','customer_approval_status',
+        'booking_id','customer','payment__cardholder_name','departure_iata', 'arrival_iata','status','customer_approval_status',
         # ('departure_date', DateRangeFilter)
     )
+    search_fields = ('booking_id',)
 
     filter_horizontal = ('passengers',)
     autocomplete_fields = ('customer',)
     readonly_fields = ('booking_id','customer_approval_status')
 
     def get_passenger_names(self, obj):
-        return ', '.join([f"{p.first_name} {p.middle_name} {p.last_name}".replace("  ", " ") for p in obj.passengers.all()])
+        passenger_links = []
+        for p in obj.passengers.all():
+            url = f"/admin/FlightAPI/passenger/{p.id}/change/"
+            link = format_html('<a href="{}">{}</a>', url, f"{p.first_name} {p.middle_name} {p.last_name}".replace("  ", " "))
+            passenger_links.append(link)
+        return format_html(', '.join(passenger_links))
     get_passenger_names.short_description = 'Passengers'
 
     def get_form(self, request, obj=None, **kwargs):
@@ -89,6 +116,8 @@ class FlightBookingAdmin(admin.ModelAdmin):
         if request.user.is_superuser:
             return qs
         return qs.filter(agent=request.user)
+
+        
 
 
 class TicketAdminForm(forms.ModelForm):
