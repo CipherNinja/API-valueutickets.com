@@ -82,20 +82,20 @@ class PaymentAdmin(admin.ModelAdmin):
 @admin.register(FlightBooking)
 class FlightBookingAdmin(admin.ModelAdmin):
     list_display = (
-        'booking_id','customer', 'get_passenger_names', 'payment', 'flight_name', 
+        'booking_id', 'customer', 'get_passenger_names', 'payment', 'flight_name', 
         'departure_iata', 'arrival_iata', 'departure_date', 'arrival_date', 
         'flight_cancellation_protection', 'sms_support', 'baggage_protection', 
-        'premium_support', 'total_refund_protection', 'payble_amount','agent','status','customer_approval_status',
+        'premium_support', 'total_refund_protection', 'payble_amount', 'agent', 'status', 'customer_approval_status',
     )
     list_filter = (
-        'booking_id','customer','payment__cardholder_name','departure_iata', 'arrival_iata','status','customer_approval_status',
+        'booking_id', 'customer', 'payment__cardholder_name', 'departure_iata', 'arrival_iata', 'status', 'customer_approval_status',
         # ('departure_date', DateRangeFilter)
     )
     search_fields = ('booking_id',)
 
     filter_horizontal = ('passengers',)
     autocomplete_fields = ('customer',)
-    readonly_fields = ('booking_id','customer_approval_status')
+    readonly_fields = ('booking_id', 'customer_approval_status')
 
     def get_passenger_names(self, obj):
         passenger_links = []
@@ -108,14 +108,33 @@ class FlightBookingAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        if not request.user.is_superuser:
-            form.base_fields['agent'].disabled = True
+        if obj and not request.user.is_superuser:
+            for field_name in form.base_fields:
+                form.base_fields[field_name].disabled = True
         return form
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj and not request.user.is_superuser:
+            return self.readonly_fields + tuple(field.name for field in self.model._meta.fields)
+        return self.readonly_fields
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         if request.user.is_superuser:
             return qs
         return qs.filter(agent=request.user)
+
+    def change_view(self, request, object_id, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        if object_id and not request.user.is_superuser:
+            extra_context['show_save'] = False
+            extra_context['show_save_and_continue'] = False
+            extra_context['show_save_and_add_another'] = False
+        return super().change_view(request, object_id, form_url, extra_context=extra_context)
+
+    def add_view(self, request, form_url='', extra_context=None):
+        extra_context = extra_context or {}
+        return super().add_view(request, form_url, extra_context=extra_context)
 
         
 
