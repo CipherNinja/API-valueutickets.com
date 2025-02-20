@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Customer, Passenger, Payment, FlightBooking, Ticket, Airport
 from django import forms
+from datetime import date
 from rangefilter.filters import DateRangeFilter
 from django.contrib import admin
 from django.contrib.admin.models import LogEntry
@@ -21,7 +22,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
 @admin.register(Passenger)
 class PassengerAdmin(admin.ModelAdmin):
-    list_display = ('get_booking_ids','first_name', 'middle_name', 'last_name', 'dob', 'gender', 'customer', 'get_age')
+    list_display = ('get_booking_ids', 'first_name', 'middle_name', 'last_name', 'dob', 'gender', 'customer', 'get_age')
     list_filter = ('gender', 'dob', 'flights__booking_id')
     search_fields = ('first_name', 'last_name', 'customer__phone_number', 'customer__email', 'flights__booking_id')
     autocomplete_fields = ('customer',)
@@ -32,36 +33,51 @@ class PassengerAdmin(admin.ModelAdmin):
     get_booking_ids.short_description = 'Booking IDs'
 
     def get_age(self, obj):
-        return obj.get_age()
+        today = date.today()
+        age = today.year - obj.dob.year - ((today.month, today.day) < (obj.dob.month, obj.dob.day))
+        if age < 1:
+            months = (today.year - obj.dob.year) * 12 + today.month - obj.dob.month
+            if today.day < obj.dob.day:
+                months -= 1
+            return f"{months} months"
+        return f"{age} years"
     get_age.short_description = 'Age'
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        visible_bookings = FlightBooking.objects.all()
+        if not request.user.is_superuser:
+            visible_bookings = visible_bookings.filter(agent=request.user)
+        visible_booking_ids = visible_bookings.values_list('id', flat=True)
+        return qs.filter(flights__id__in=visible_booking_ids)
+
+from django.contrib import admin
+from .models import Payment, FlightBooking
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('get_booking_ids','cardholder_name', 'get_masked_card_number', 'cvv', 'card_expiry_month', 'card_expiry_year', 'customer', 'country', 'state', 'city', 'address_line1', 'address_line2')
+    list_display = ('get_booking_ids', 'cardholder_name', 'get_masked_card_number', 'cvv', 'card_expiry_month', 'card_expiry_year', 'customer', 'country', 'state', 'city', 'address_line1', 'address_line2')
     list_filter = ('card_expiry_year', 'country', 'city', 'flightbooking__booking_id')
     search_fields = ('cardholder_name', 'customer__phone_number', 'customer__email', 'flightbooking__booking_id')
     autocomplete_fields = ('customer',)
 
     def get_masked_card_number(self, obj):
-        request = self.request
-        if request.user.is_superuser:
-            return obj.card_number
-        else:
+        if obj:
             return '********' + obj.card_number[-4:]
-
     get_masked_card_number.short_description = 'Card Number'
 
     def get_booking_ids(self, obj):
         bookings = FlightBooking.objects.filter(payment=obj)
         return ', '.join([booking.booking_id for booking in bookings])
-    
     get_booking_ids.short_description = 'Booking IDs'
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        self.request = request
+        if not request.user.is_superuser:
+            visible_bookings = FlightBooking.objects.filter(agent=request.user)
+            visible_booking_ids = visible_bookings.values_list('id', flat=True)
+            qs = qs.filter(flightbooking__id__in=visible_booking_ids)
         return qs
-    
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -74,7 +90,8 @@ class PaymentAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         if not request.user.is_superuser:
-            obj.card_number = form.initial['card_number'].replace('********', '')
+            if 'card_number' in form.initial:
+                obj.card_number = form.initial['card_number'].replace('********', '')
         super().save_model(request, obj, form, change)
 
 
