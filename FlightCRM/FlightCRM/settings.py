@@ -113,6 +113,11 @@ CORS_ALLOW_METHODS = [
     "OPTIONS",
 ]
 
+CORS_ALLOW_HEADERS = [
+    'authorization',
+    'content-type',
+    'x-requested-with',
+]
 
 ROOT_URLCONF = 'FlightCRM.urls'
 
