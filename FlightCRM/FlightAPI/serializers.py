@@ -84,7 +84,7 @@ class FlightBookingCreateSerializer(serializers.Serializer):
             payble_amount=validated_data['payble_amount']
         )
         booking.passengers.set(passenger_instances)  # Link passengers to the booking
-
+        booking.save()
         return {
             "customer_id": customer.id,
             "booking_id": booking.id,

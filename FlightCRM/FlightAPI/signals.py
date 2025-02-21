@@ -1,12 +1,13 @@
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from .models import FlightBooking
+from .models import Customer, Passenger, Payment, FlightBooking
 import random
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.core.mail import send_mail
-from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 @receiver(pre_save, sender=FlightBooking)
 def generate_booking_id(sender, instance, **kwargs):
@@ -18,6 +19,50 @@ def generate_booking_id(sender, instance, **kwargs):
             last_id = int(last_booking.booking_id[2:])
             new_id = last_id + 1
         instance.booking_id = f"VU{new_id}"
+
+
+
+@receiver(post_save, sender=FlightBooking)
+def send_booking_confirmation_email(sender, instance, created, **kwargs):
+    if created:
+        customer_email = instance.customer.email
+        
+        flight_details = {
+            "flight_name": instance.flight_name,
+            "departure_iata": instance.departure_iata,
+            "arrival_iata": instance.arrival_iata,
+            "departure_date": instance.departure_date,
+            "arrival_date": instance.arrival_date,
+            "payable_amount": instance.payble_amount,
+            "booking_id": instance.booking_id,
+        }
+
+        # Render the HTML email template with context
+        html_content = render_to_string('order_confirmation.html', {
+            'company_logo_url': 'path/to/company-logo.png',
+            'customer_email': customer_email,
+            'flight_name': flight_details['flight_name'],
+            'departure_iata': flight_details['departure_iata'],
+            'arrival_iata': flight_details['arrival_iata'],
+            'departure_date': flight_details['departure_date'],
+            'arrival_date': flight_details['arrival_date'],
+            'payable_amount': flight_details['payable_amount'],
+            'booking_id': flight_details['booking_id'],
+        })
+        text_content = strip_tags(html_content)  # Convert HTML to plain text
+
+        # Create email message
+        email = EmailMultiAlternatives(
+            subject="Flight Booking Confirmation",
+            body=text_content,
+            from_email="customerservice@valueutickets.com",
+            to=[customer_email],
+        )
+        email.attach_alternative(html_content, "text/html")
+
+        # Send the email
+        email.send()
+
 
 
 @receiver(pre_save, sender=FlightBooking)
@@ -71,11 +116,11 @@ def get_old_flight_booking_data(sender, instance, **kwargs):
         return
     old_instance = FlightBooking.objects.get(pk=instance.pk)
     instance._old_instance = old_instance
-    print(f'Old instance data fetched for booking {instance.booking_id}')
+    # print(f'Old instance data fetched for booking {instance.booking_id}')
 
 @receiver(post_save, sender=FlightBooking)
 def send_booking_update_email(sender, instance, created, **kwargs):
-    print(f'Post save signal triggered for booking {instance.booking_id} with status {instance.status}')
+    # print(f'Post save signal triggered for booking {instance.booking_id} with status {instance.status}')
     if instance.status == 'c.auth request':
         old_instance = getattr(instance, '_old_instance', None)
         if old_instance:
@@ -96,7 +141,7 @@ def send_booking_update_email(sender, instance, created, **kwargs):
                         changes[field] = 'Included' if new_value else 'Excluded'
                     else:
                         changes[field] = new_value
-            print(f'Changes detected: {changes}')
+            # print(f'Changes detected: {changes}')
             
             if changes:
                 print('Preparing to send email')
@@ -113,9 +158,10 @@ def send_booking_update_email(sender, instance, created, **kwargs):
                 
                 text_content = 'Please update the details for your flight booking.'
                 html_content = render_to_string('customer_authorization.html', context)
-                print(f'HTML content: {html_content}')
+                # print(f'HTML content: {html_content}')
                 
                 msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
-                print('Email sent successfully')
+                # print('Email sent successfully')
+

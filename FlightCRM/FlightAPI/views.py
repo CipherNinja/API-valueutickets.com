@@ -32,43 +32,46 @@ class FlightBookingCreateView(APIView):
         # Validate the data
         if serializer.is_valid():
             booking_data = serializer.save()
-            customer_email = serializer.validated_data['email']
-            passengers = serializer.validated_data['passengers']
-            flight_details = {
-                "flight_name": serializer.validated_data['flight_name'],
-                "departure_iata": serializer.validated_data['departure_iata'],
-                "arrival_iata": serializer.validated_data['arrival_iata'],
-                "departure_date": serializer.validated_data['departure_date'],
-                "arrival_date": serializer.validated_data['arrival_date'],
-                "payable_amount": serializer.validated_data['payble_amount'],
-                "total_passengers": len(passengers),
-            }
+            
+            # email is moved in signals.py 
+            
+            # customer_email = serializer.validated_data['email']
+            # passengers = serializer.validated_data['passengers']
+            # flight_details = {
+            #     "flight_name": serializer.validated_data['flight_name'],
+            #     "departure_iata": serializer.validated_data['departure_iata'],
+            #     "arrival_iata": serializer.validated_data['arrival_iata'],
+            #     "departure_date": serializer.validated_data['departure_date'],
+            #     "arrival_date": serializer.validated_data['arrival_date'],
+            #     "payable_amount": serializer.validated_data['payble_amount'],
+            #     "total_passengers": len(passengers),
+            # }
 
-            # Render the HTML email template with context
-            html_content = render_to_string('order_confirmation.html', {
-                'company_logo_url': 'path/to/company-logo.png',
-                'customer_email': customer_email,
-                'flight_name': flight_details['flight_name'],
-                'departure_iata': flight_details['departure_iata'],
-                'arrival_iata': flight_details['arrival_iata'],
-                'departure_date': flight_details['departure_date'],
-                'arrival_date': flight_details['arrival_date'],
-                'total_passengers': flight_details['total_passengers'],
-                'payable_amount': flight_details['payable_amount'],
-            })
-            text_content = strip_tags(html_content)  # Convert HTML to plain text
+            # # Render the HTML email template with context
+            # html_content = render_to_string('order_confirmation.html', {
+            #     'company_logo_url': 'path/to/company-logo.png',
+            #     'customer_email': customer_email,
+            #     'flight_name': flight_details['flight_name'],
+            #     'departure_iata': flight_details['departure_iata'],
+            #     'arrival_iata': flight_details['arrival_iata'],
+            #     'departure_date': flight_details['departure_date'],
+            #     'arrival_date': flight_details['arrival_date'],
+            #     'total_passengers': flight_details['total_passengers'],
+            #     'payable_amount': flight_details['payable_amount'],
+            # })
+            # text_content = strip_tags(html_content)  # Convert HTML to plain text
 
-            # Create email message
-            email = EmailMultiAlternatives(
-                subject="Flight Booking Confirmation",
-                body=text_content,
-                from_email="customerservice@valueutickets.com",
-                to=[customer_email],
-            )
-            email.attach_alternative(html_content, "text/html")
+            # # Create email message
+            # email = EmailMultiAlternatives(
+            #     subject="Flight Booking Confirmation",
+            #     body=text_content,
+            #     from_email="customerservice@valueutickets.com",
+            #     to=[customer_email],
+            # )
+            # email.attach_alternative(html_content, "text/html")
 
-            # Send the email
-            email.send()
+            # # Send the email
+            # email.send()
 
             return Response({
                 "message": "Booking successful!",
