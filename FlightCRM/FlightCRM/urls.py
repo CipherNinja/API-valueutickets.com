@@ -25,3 +25,9 @@ urlpatterns = [
     re_path(r'^media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),
     path('',include('FlightAPI.urls')),
 ]
+
+
+handler404 = 'FlightAPI.views.custom_404_view'
+handler500 = 'FlightAPI.views.custom_500_view'
+handler403 = 'FlightAPI.views.custom_403_view'
+handler400 = 'FlightAPI.views.custom_400_view'

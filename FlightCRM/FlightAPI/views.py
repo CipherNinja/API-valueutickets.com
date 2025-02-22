@@ -180,3 +180,18 @@ class CustomerResponseView(APIView):
         booking.save()
         
         return HttpResponse(f'Booking changes {customer_response}ed successfully')
+
+
+
+
+def custom_404_view(request, exception):
+    return render(request, 'Errors/404_Not_Found.html', status=404)
+
+def custom_500_view(request):
+    return render(request, 'Errors/500.html', status=500)
+
+def custom_403_view(request, exception):
+    return render(request, 'Errors/403.html', status=403)
+
+def custom_400_view(request, exception):
+    return render(request, 'Errors/400_Bad_Request.html', status=400)
