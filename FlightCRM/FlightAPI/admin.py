@@ -29,7 +29,9 @@ class PassengerAdmin(admin.ModelAdmin):
 
     def get_booking_ids(self, obj):
         bookings = obj.flights.all()
-        return ', '.join([booking.booking_id for booking in bookings])
+        if bookings:
+            return ', '.join([booking.booking_id for booking in bookings])
+        return 'NA'
     get_booking_ids.short_description = 'Booking IDs'
 
     def get_age(self, obj):
@@ -45,14 +47,12 @@ class PassengerAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        visible_bookings = FlightBooking.objects.all()
-        if not request.user.is_superuser:
-            visible_bookings = visible_bookings.filter(agent=request.user)
+        if request.user.is_superuser:
+            return qs
+        visible_bookings = FlightBooking.objects.filter(agent=request.user)
         visible_booking_ids = visible_bookings.values_list('id', flat=True)
         return qs.filter(flights__id__in=visible_booking_ids)
 
-from django.contrib import admin
-from .models import Payment, FlightBooking
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
