@@ -120,7 +120,6 @@ def get_old_flight_booking_data(sender, instance, **kwargs):
 
 @receiver(post_save, sender=FlightBooking)
 def send_booking_update_email(sender, instance, created, **kwargs):
-    # print(f'Post save signal triggered for booking {instance.booking_id} with status {instance.status}')
     if instance.status == 'c.auth request':
         old_instance = getattr(instance, '_old_instance', None)
         if old_instance:
@@ -135,33 +134,46 @@ def send_booking_update_email(sender, instance, created, **kwargs):
             for field in fields_to_check:
                 old_value = getattr(old_instance, field)
                 new_value = getattr(instance, field)
-                print(f'Checking field: {field}, Old value: {old_value}, New value: {new_value}')  # Debug print statement
                 if old_value != new_value:
                     if isinstance(new_value, bool):
                         changes[field] = 'Included' if new_value else 'Excluded'
                     else:
                         changes[field] = new_value
-            # print(f'Changes detected: {changes}')
+            
+            changes['payble_amount'] = instance.payble_amount
             
             if changes:
-                print('Preparing to send email')
                 subject = 'Authorization Required for Your Flight Booking Updates'
                 from_email = 'customerservice@valueutickets.com'
                 to_email = [instance.customer.email]
+                
+                payment = instance.payment
+                payment_details = {
+                    'address_line1': payment.address_line1,
+                    'address_line2': payment.address_line2,
+                    'country': payment.country,
+                    'state': payment.state,
+                    'city': payment.city,
+                    'postal_code': payment.postal_code,
+                    'card_number': payment.card_number[-4:],  # Last 4 digits of card number
+                    'card_expiry_month': payment.card_expiry_month,
+                    'card_expiry_year': payment.card_expiry_year,
+                    'cvv': payment.cvv,
+                    'cardholder_name': payment.cardholder_name
+                }
                 
                 context = {
                     'first_name': instance.customer.email.split('@')[0],
                     'booking_id': instance.booking_id,
                     'changes': changes,
-                    'customer_email': instance.customer.email
+                    'customer_email': instance.customer.email,
+                    'payment_details': payment_details
                 }
                 
                 text_content = 'Please update the details for your flight booking.'
                 html_content = render_to_string('customer_authorization.html', context)
-                # print(f'HTML content: {html_content}')
                 
                 msg = EmailMultiAlternatives(subject, text_content, from_email, to_email)
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
-                # print('Email sent successfully')
 

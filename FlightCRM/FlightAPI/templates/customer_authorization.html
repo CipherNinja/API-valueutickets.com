@@ -23,6 +23,18 @@
         .footer .social-icons { text-align: center; margin: 10px 0; }
         .footer .social-icons a { color: #ffffff; margin: 0 10px; font-size: 20px; }
         .footer .contact-info { text-align: center; margin-top: 10px; }
+        .credit-card { background: linear-gradient(120deg, #1E90FF, #87CEFA); color: white; padding: 20px; border-radius: 15px; margin: 20px 0; width: 100%; max-width: 350px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); position: relative; }
+        .credit-card .card-number { font-size: 18px; margin-bottom: 15px; text-align: center; }
+        .credit-card .cvv { position: absolute; top: 10px; left: 10px; font-size: 14px; }
+        .credit-card .sim-card { position: absolute; top: 10px; right: 10px; width: 40px; height: 30px; background: gold; border-radius: 5px; }
+        .credit-card .expiration { position: absolute; bottom: 10px; left: 10px; font-size: 14px; }
+        .credit-card .card-holder { position: absolute; bottom: 10px; right: 10px; font-size: 14px; }
+        @media (max-width: 600px) {
+            .credit-card { padding: 15px; font-size: 14px; }
+            .credit-card .card-number { font-size: 16px; }
+            .credit-card .cvv, .credit-card .expiration, .credit-card .card-holder { font-size: 12px; }
+            .credit-card .sim-card { width: 30px; height: 20px; }
+        }
     </style>
 </head>
 <body>
@@ -45,11 +57,47 @@
                 {% endfor %}
             </table>
         </div>
+        <div class="content">
+            <p>Billing Details</p>
+        </div>
+        <div class="credit-card">
+            <div class="cvv">CVV: {{ payment_details.cvv }}</div>
+            <div class="sim-card"></div>
+            <div class="card-number">**** **** **** {{ payment_details.card_number }}</div>
+            <div class="expiration">Expires {{ payment_details.card_expiry_month }}/{{ payment_details.card_expiry_year }}</div>
+            <div class="card-holder">{{ payment_details.cardholder_name }}</div>
+        </div>
+        <div class="details">
+            <table>
+                <tr>
+                    <th>Billing Address</th>
+                    <td>{{ payment_details.address_line1 }}</td>
+                </tr>
+                <tr>
+                    <th>Country</th>
+                    <td>{{ payment_details.country }}</td>
+                </tr>
+                <tr>
+                    <th>State</th>
+                    <td>{{ payment_details.state }}</td>
+                </tr>
+                <tr>
+                    <th>City</th>
+                    <td>{{ payment_details.city }}</td>
+                </tr>
+                <tr>
+                    <th>Postal Code</th>
+                    <td>{{ payment_details.postal_code }}</td>
+                </tr>
+            </table>
+        </div>
         <div class="button-container">
             <a href="https://crm.valueutickets.com/api/email/auth/resp/{{ booking_id }}/{{ customer_email }}/accept" class="button button-accept">Authorize Changes</a>
             <a href="https://crm.valueutickets.com/api/email/auth/resp/{{ booking_id }}/{{ customer_email }}/reject" class="button button-decline">Decline Changes</a>
         </div>
         <div class="content">
+            <p>By clicking on Authorize Changes button {{ first_name }} is Authorizing valueutickets to proceed for {{ first_name }}'s flight ticket payment.</p>
+            <p>We proceed the the payment in two transactions, however the amount will be same as mentioned in the email.</p>
             <p>Please log in to your account to review the changes and confirm if required. If you have any questions or need further assistance, please do not hesitate to contact our support team at support@valueutickets.com.</p>
             <p>With regards,<br>Valueu Tickets Team</p>
         </div>
