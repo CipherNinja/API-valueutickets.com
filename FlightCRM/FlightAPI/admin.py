@@ -73,7 +73,7 @@ class PaymentAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if not request.user.is_superuser:
+        if not request.user.is_superuser and not request.user.groups.filter(name='flightapi_admin').exists():
             visible_bookings = FlightBooking.objects.filter(agent=request.user)
             visible_booking_ids = visible_bookings.values_list('id', flat=True)
             qs = qs.filter(flightbooking__id__in=visible_booking_ids)
@@ -81,7 +81,7 @@ class PaymentAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        if obj and not request.user.is_superuser:
+        if obj and not request.user.is_superuser and not request.user.groups.filter(name='flightapi_admin').exists():
             original_card_number = obj.card_number
             masked_card_number = '********' + original_card_number[-4:]
             form.base_fields['card_number'].initial = masked_card_number
@@ -89,7 +89,7 @@ class PaymentAdmin(admin.ModelAdmin):
         return form
 
     def save_model(self, request, obj, form, change):
-        if not request.user.is_superuser:
+        if not request.user.is_superuser and not request.user.groups.filter(name='flightapi_admin').exists():
             if 'card_number' in form.initial:
                 obj.card_number = form.initial['card_number'].replace('********', '')
         super().save_model(request, obj, form, change)
