@@ -125,25 +125,25 @@ class FlightBookingAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        if obj and not request.user.is_superuser:
+        if obj and not request.user.is_superuser and not request.user.groups.filter(name='flightapi_admin').exists():
             for field_name in form.base_fields:
                 form.base_fields[field_name].disabled = True
         return form
 
     def get_readonly_fields(self, request, obj=None):
-        if obj and not request.user.is_superuser:
+        if obj and not request.user.is_superuser and not request.user.groups.filter(name='flightapi_admin').exists():
             return self.readonly_fields + tuple(field.name for field in self.model._meta.fields)
         return self.readonly_fields
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if request.user.is_superuser:
+        if request.user.is_superuser or request.user.groups.filter(name='flightapi_admin').exists():
             return qs
         return qs.filter(agent=request.user)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         extra_context = extra_context or {}
-        if object_id and not request.user.is_superuser:
+        if object_id and not request.user.is_superuser and not request.user.groups.filter(name='flightapi_admin').exists():
             extra_context['show_save'] = False
             extra_context['show_save_and_continue'] = False
             extra_context['show_save_and_add_another'] = False
