@@ -47,7 +47,7 @@ class PassengerAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if request.user.is_superuser:
+        if request.user.is_superuser or request.user.groups.filter(name='flightapi_admin').exists():
             return qs
         visible_bookings = FlightBooking.objects.filter(agent=request.user)
         visible_booking_ids = visible_bookings.values_list('id', flat=True)
