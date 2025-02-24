@@ -21,7 +21,27 @@ class FlightSearchSerializer(serializers.Serializer):
 
     ticket_class = serializers.ChoiceField(choices=["Economy", "Premium_Economy", "Business", "First"], default="Economy")
 
+class FlightSearchRoundTrip(serializers.Serializer):
+    source_iata = serializers.CharField(max_length=3)  # Departure Airport IATA
+    destination_iata = serializers.CharField(max_length=3)  # Arrival Airport IATA
+    outbound = serializers.DateField(format="%Y-%m-%d")  # Flight Date (YYYY-MM-DD)
+    inbound = serializers.DateField(format="%Y-%m-%d")
+    adults = serializers.IntegerField(min_value=1, max_value=9, default=1)  # Adult passengers (Default 1)
+    children = serializers.IntegerField(min_value=0, max_value=9, default=0)  # Children (0-12 yrs)
+    infants = serializers.IntegerField(min_value=0, max_value=9, default=0)  # Infants (0-2 yrs)
+    ticket_class = serializers.ChoiceField(choices=["Economy", "Premium_Economy", "Business", "First"], default="Economy")
 
+    def validate_ticket_class(self, value):
+        valid_classes = ["Economy", "Premium_Economy", "Business", "First"]
+        if value not in valid_classes:
+            raise serializers.ValidationError("Invalid ticket class. Please choose from: Economy, Premium Economy, Business, First.")
+        return value
+    
+    def validate(self, data):
+        # Custom validation logic if needed
+        if data['outbound'] >= data['inbound']:
+            raise serializers.ValidationError("Return date must be after departure date.")
+        return data
 
 class FlightBookingCreateSerializer(serializers.Serializer):
     phone_number = serializers.CharField(max_length=15,required=True)
