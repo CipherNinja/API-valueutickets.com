@@ -1,0 +1,1151 @@
+{
+    "query": {
+      "market": "US",
+      "currency": "USD",
+      "locale": "en-GB",
+      "adults": 1,
+      "child_ages": [],
+      "cabin_class": "economy",
+      "legs": [
+        {
+          "origin": 15265,
+          "alternative_origins": [],
+          "destination": 12389,
+          "alternative_destinations": [],
+          "date": "2025-02-26"
+        },
+        {
+          "origin": 12389,
+          "alternative_origins": [],
+          "destination": 15265,
+          "alternative_destinations": [],
+          "date": "2025-03-03"
+        }
+      ],
+      "children": 0,
+      "infants": 0
+    },
+    "context": {
+      "request_id": "",
+      "session_id": "565c99f8-85fb-497f-b010-409eb7c4dd2f"
+    },
+    "itineraries": [
+      {
+        "id": "15265-2502260632--32289-1-12389-2502262025|12389-2503032207--32289-1-15265-2503050037",
+        "leg_ids": [
+          "15265-2502260632--32289-1-12389-2502262025",
+          "12389-2503032207--32289-1-15265-2503050037"
+        ],
+        "pricing_options": [
+          {
+            "id": "pv1uh6mGi7BD",
+            "agent_ids": [
+              "fron"
+            ],
+            "price": {
+              "amount": 509.96,
+              "update_status": "current",
+              "last_updated": "2025-02-24T04:23:56",
+              "quote_age": 0
+            },
+            "unpriced_type": "",
+            "items": [
+              {
+                "agent_id": "fron",
+                "url": "/transport_deeplink/4.0/US/en-GB/USD/fron/2/15265.12389.2025-02-26,12389.15265.2025-03-03/air/airli/flights?itinerary=flight|-32289|1790|15265|2025-02-26T06:32|10959|2025-02-26T10:13|161|E03PXP5|-|E;flight|-32289|4856|10959|2025-02-26T17:02|12389|2025-02-26T20:25|143|E03PXP5|-|E,flight|-32289|4855|12389|2025-03-03T22:07|10959|2025-03-03T23:44|157|M07PXP5|-|E;flight|-32289|2687|10959|2025-03-04T22:45|15265|2025-03-05T00:37|172|M07PXP5|-|E&carriers=-32289&operators=-32289;-32289,-32289;-32289&passengers=1&channel=website&cabin_class=economy&fps_session_id=565c99f8-85fb-497f-b010-409eb7c4dd2f&ticket_price=509.96&is_npt=false&is_multipart=false&client_id=skyscanner_website&q_ids=H4sIAAAAAAAA_-NS4GJJK8rPE2LmWFguxczxNEGhYfPPvWwaDY8m72MzYlJgBACr7cnIIgAAAA|-7998819415965777929|2&q_sources=JACQUARD&commercial_filters=false&q_datetime_utc=2025-02-24T04:23:56&pqid=false&fare_type=base_fare",
+                "segment_ids": [
+                  "15265-10959-2502260632-2502261013--32289",
+                  "10959-12389-2502261702-2502262025--32289",
+                  "12389-10959-2503032207-2503032344--32289",
+                  "10959-15265-2503042245-2503050037--32289"
+                ],
+                "price": {
+                  "amount": 509.96,
+                  "update_status": "current",
+                  "last_updated": "2025-02-24T04:23:56",
+                  "quote_age": 0
+                },
+                "booking_proposition": "PBOOK",
+                "transfer_protection": "",
+                "max_redirect_age": 10,
+                "fares": [
+                  {
+                    "segment_id": "15265-10959-2502260632-2502261013--32289",
+                    "fare_basis_code": "E03PXP5",
+                    "fare_family": "E"
+                  },
+                  {
+                    "segment_id": "10959-12389-2502261702-2502262025--32289",
+                    "fare_basis_code": "E03PXP5",
+                    "fare_family": "E"
+                  },
+                  {
+                    "segment_id": "12389-10959-2503032207-2503032344--32289",
+                    "fare_basis_code": "M07PXP5",
+                    "fare_family": "E"
+                  },
+                  {
+                    "segment_id": "10959-15265-2503042245-2503050037--32289",
+                    "fare_basis_code": "M07PXP5",
+                    "fare_family": "E"
+                  }
+                ],
+                "opaque_id": "1632515582",
+                "booking_metadata": {
+                  "metadata_set": "",
+                  "signature": ""
+                },
+                "ticket_attributes": [],
+                "flight_attributes": [],
+                "discount_category": "DISCOUNT_CATEGORY_UNSPECIFIED",
+                "marketing_carrier_ids": [-32289]
+              }
+            ],
+            "transfer_type": "MANAGED",
+            "score": 8.04788,
+            "pricing_option_fare": {
+              "attribute_labels": [],
+              "leg_details": {
+  
+              },
+              "brand_names": [],
+              "added_attribute_labels": []
+            },
+            "pricing_option_fare_type": "BASE_FARE"
+          }
+        ],
+        "pricing_option_variants": [],
+        "score": 8.04798,
+        "cheapest_price": {
+          "amount": 509.96,
+          "update_status": "current",
+          "last_updated": "2025-02-24T04:23:56",
+          "quote_age": 0
+        },
+        "pricing_options_count": 1,
+        "has_linked_pricing_options": false
+      }
+    ],
+    "legs": [
+      {
+        "id": "15265-2502260632--32289-1-12389-2502262025",
+        "origin_place_id": 15265,
+        "destination_place_id": 12389,
+        "departure": "2025-02-26T06:32:00",
+        "arrival": "2025-02-26T20:25:00",
+        "segment_ids": [
+          "15265-10959-2502260632-2502261013--32289",
+          "10959-12389-2502261702-2502262025--32289"
+        ],
+        "duration": 713,
+        "stop_count": 1,
+        "marketing_carrier_ids": [-32289],
+        "operating_carrier_ids": [-32289],
+        "stop_ids": [
+          [10959]
+        ],
+        "self_transfer": false
+      },
+      {
+        "id": "12389-2503032207--32289-1-15265-2503050037",
+        "origin_place_id": 12389,
+        "destination_place_id": 15265,
+        "departure": "2025-03-03T22:07:00",
+        "arrival": "2025-03-05T00:37:00",
+        "segment_ids": [
+          "12389-10959-2503032207-2503032344--32289",
+          "10959-15265-2503042245-2503050037--32289"
+        ],
+        "duration": 1710,
+        "stop_count": 1,
+        "marketing_carrier_ids": [-32289],
+        "operating_carrier_ids": [-32289],
+        "stop_ids": [
+          [10959]
+        ],
+        "self_transfer": false
+      }
+    ],
+    "segments": [
+      {
+        "id": "15265-10959-2502260632-2502261013--32289",
+        "origin_place_id": 15265,
+        "destination_place_id": 10959,
+        "arrival": "2025-02-26T10:13:00",
+        "departure": "2025-02-26T06:32:00",
+        "duration": 161,
+        "marketing_flight_number": "1790",
+        "marketing_carrier_id": -32289,
+        "operating_carrier_id": -32289,
+        "mode": "flight"
+      },
+      {
+        "id": "10959-12389-2502261702-2502262025--32289",
+        "origin_place_id": 10959,
+        "destination_place_id": 12389,
+        "arrival": "2025-02-26T20:25:00",
+        "departure": "2025-02-26T17:02:00",
+        "duration": 143,
+        "marketing_flight_number": "4856",
+        "marketing_carrier_id": -32289,
+        "operating_carrier_id": -32289,
+        "mode": "flight"
+      },
+      {
+        "id": "12389-10959-2503032207-2503032344--32289",
+        "origin_place_id": 12389,
+        "destination_place_id": 10959,
+        "arrival": "2025-03-03T23:44:00",
+        "departure": "2025-03-03T22:07:00",
+        "duration": 157,
+        "marketing_flight_number": "4855",
+        "marketing_carrier_id": -32289,
+        "operating_carrier_id": -32289,
+        "mode": "flight"
+      },
+      {
+        "id": "10959-15265-2503042245-2503050037--32289",
+        "origin_place_id": 10959,
+        "destination_place_id": 15265,
+        "arrival": "2025-03-05T00:37:00",
+        "departure": "2025-03-04T22:45:00",
+        "duration": 172,
+        "marketing_flight_number": "2687",
+        "marketing_carrier_id": -32289,
+        "operating_carrier_id": -32289,
+        "mode": "flight"
+      },
+      {
+        "id": "12389-10959-2503030600-2503030735--32289",
+        "origin_place_id": 12389,
+        "destination_place_id": 10959,
+        "arrival": "2025-03-03T07:35:00",
+        "departure": "2025-03-03T06:00:00",
+        "duration": 155,
+        "marketing_flight_number": "3229",
+        "marketing_carrier_id": -32289,
+        "operating_carrier_id": -32289,
+        "mode": "flight"
+      },
+      {
+        "id": "10959-15265-2503032245-2503040037--32289",
+        "origin_place_id": 10959,
+        "destination_place_id": 15265,
+        "arrival": "2025-03-04T00:37:00",
+        "departure": "2025-03-03T22:45:00",
+        "duration": 172,
+        "marketing_flight_number": "2687",
+        "marketing_carrier_id": -32289,
+        "operating_carrier_id": -32289,
+        "mode": "flight"
+      }
+    ],
+    "places": [
+      {
+        "id": 15265,
+        "entity_id": 95673720,
+        "alt_id": "PDX",
+        "parent_id": 6145,
+        "parent_entity_id": 27542060,
+        "name": "Portland",
+        "type": "Airport",
+        "display_code": "PDX"
+      },
+      {
+        "id": 6145,
+        "entity_id": 27542060,
+        "alt_id": "PDXA",
+        "parent_id": 115,
+        "parent_entity_id": 29475437,
+        "name": "Portland",
+        "type": "City",
+        "display_code": "PDX"
+      },
+      {
+        "id": 115,
+        "entity_id": 29475437,
+        "alt_id": "US",
+        "parent_id": 8,
+        "name": "United States",
+        "type": "Country",
+        "display_code": "US"
+      },
+      {
+        "id": 12389,
+        "entity_id": 95673412,
+        "alt_id": "IAH",
+        "parent_id": 3253,
+        "parent_entity_id": 27538417,
+        "name": "Houston George Bush Intercntl.",
+        "type": "Airport",
+        "display_code": "IAH"
+      },
+      {
+        "id": 3253,
+        "entity_id": 27538417,
+        "alt_id": "HOUA",
+        "parent_id": 115,
+        "parent_entity_id": 29475437,
+        "name": "Houston",
+        "type": "City",
+        "display_code": "HOU"
+      },
+      {
+        "id": 2109,
+        "entity_id": 27536589,
+        "alt_id": "DENA",
+        "parent_id": 115,
+        "parent_entity_id": 29475437,
+        "name": "Denver",
+        "type": "City",
+        "display_code": "DEN"
+      },
+      {
+        "id": 10959,
+        "entity_id": 95673705,
+        "alt_id": "DEN",
+        "parent_id": 2109,
+        "parent_entity_id": 27536589,
+        "name": "Denver International",
+        "type": "Airport",
+        "display_code": "DEN"
+      }
+    ],
+    "carriers": [
+      {
+        "id": -32289,
+        "name": "Frontier Airlines",
+        "alt_id": "F9",
+        "display_code": "F9",
+        "display_code_type": "IATA"
+      }
+    ],
+    "alliances": [],
+    "brands": [],
+    "agents": [
+      {
+        "id": "oojo",
+        "name": "Oojo",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.66,
+        "feedback_count": 3919,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "spir",
+        "name": "Spirit Airlines",
+        "is_carrier": true,
+        "update_status": "pending",
+        "optimised_for_mobile": false,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 3.95,
+        "feedback_count": 2093,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "fara",
+        "name": "Farera",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 2.52,
+        "feedback_count": 268,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "jfus",
+        "name": "Justfly.com",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.5,
+        "feedback_count": 1725,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "dhop",
+        "name": "WAYA",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 2.62,
+        "feedback_count": 203,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "pcln",
+        "name": "Priceline",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 3.38,
+        "feedback_count": 1113,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "uair",
+        "name": "United",
+        "is_carrier": true,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.87,
+        "feedback_count": 6968,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "bcom",
+        "name": "Booking.com ",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.78,
+        "feedback_count": 8666,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "jtus",
+        "name": "Jetabroad",
+        "is_carrier": false,
+        "update_status": "current",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 3.83,
+        "feedback_count": 329,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "ovgo",
+        "name": "Ovago",
+        "is_carrier": false,
+        "update_status": "current",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 3.79,
+        "feedback_count": 1083,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "tlcy",
+        "name": "Travelocity",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 1.64,
+        "feedback_count": 436,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "arus",
+        "name": "Mytrip",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 3.3,
+        "feedback_count": 3886,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "stbf",
+        "name": "Sky-tours",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 2.01,
+        "feedback_count": 1128,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "emir",
+        "name": "Emirates",
+        "is_carrier": true,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.81,
+        "feedback_count": 682,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "aaus",
+        "name": "American Airlines",
+        "is_carrier": true,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.87,
+        "feedback_count": 7767,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "gtus",
+        "name": "Gotogate",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 3.02,
+        "feedback_count": 1066,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "etrp",
+        "name": "Exploretrip",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.18,
+        "feedback_count": 503,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "suus",
+        "name": "StudentUniverse",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 1.52,
+        "feedback_count": 411,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "dela",
+        "name": "Delta",
+        "is_carrier": true,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.9,
+        "feedback_count": 6185,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "ghus",
+        "name": "Globehunters",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 3.09,
+        "feedback_count": 30,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "vbus",
+        "name": "Viva",
+        "is_carrier": true,
+        "update_status": "current",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.18,
+        "feedback_count": 736,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "byus",
+        "name": "BYOjet US",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 1.47,
+        "feedback_count": 104,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "kfus",
+        "name": "Kissandfly",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 2.42,
+        "feedback_count": 1003,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "skyp",
+        "name": "Kiwi.com",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 2.99,
+        "feedback_count": 3307,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "xpus",
+        "name": "Expedia",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.62,
+        "feedback_count": 6203,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "orbz",
+        "name": "Orbitz",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 1.78,
+        "feedback_count": 421,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "fnus",
+        "name": "Flightnetwork",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 2.99,
+        "feedback_count": 721,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "edus",
+        "name": "eDreams",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 2.62,
+        "feedback_count": 4492,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "chpo",
+        "name": "CheapOair",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 2.03,
+        "feedback_count": 1631,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "smtf",
+        "name": "SmartFares",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 3.33,
+        "feedback_count": 785,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "dstn",
+        "name": "Destina Holidays",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.88,
+        "feedback_count": 136,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "cust",
+        "name": "Trip.com",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.45,
+        "feedback_count": 8703,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "wfus",
+        "name": "Wizfair",
+        "is_carrier": false,
+        "update_status": "current",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4.61,
+        "feedback_count": 928,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "vaya",
+        "name": "BudgetAir",
+        "is_carrier": false,
+        "update_status": "pending",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 3.77,
+        "feedback_count": 3795,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      },
+      {
+        "id": "fron",
+        "name": "Frontier Airlines",
+        "is_carrier": true,
+        "update_status": "current",
+        "optimised_for_mobile": true,
+        "live_update_allowed": true,
+        "rating_status": "available",
+        "rating": 4,
+        "feedback_count": 2844,
+        "rating_breakdown": {
+          "reliable_prices": 0,
+          "clear_extra_fees": 0,
+          "customer_service": 0,
+          "ease_of_booking": 0,
+          "other": 0
+        }
+      }
+    ],
+    "stats": {
+      "itineraries": {
+        "min_duration": 1950,
+        "max_duration": 2423,
+        "min_longest_itinerary_leg_duration": 1237,
+        "max_longest_itinerary_leg_duration": 1710,
+        "total": {
+          "count": 2,
+          "min_price": 509.96
+        },
+        "stops": {
+          "direct": {
+            "total": {
+              "count": 0
+            },
+            "ticket": {
+              "single_ticket": {
+                "count": 0
+              },
+              "multi_ticket_non_npt": {
+                "count": 0
+              },
+              "multi_ticket_npt": {
+                "count": 0
+              }
+            }
+          },
+          "one_stop": {
+            "total": {
+              "count": 2,
+              "min_price": 509.96
+            },
+            "ticket": {
+              "single_ticket": {
+                "count": 2,
+                "min_price": 509.96
+              },
+              "multi_ticket_non_npt": {
+                "count": 0
+              },
+              "multi_ticket_npt": {
+                "count": 0
+              }
+            }
+          },
+          "two_plus_stops": {
+            "total": {
+              "count": 0
+            },
+            "ticket": {
+              "single_ticket": {
+                "count": 0
+              },
+              "multi_ticket_non_npt": {
+                "count": 0
+              },
+              "multi_ticket_npt": {
+                "count": 0
+              }
+            }
+          }
+        },
+        "fares": {
+          "advance_seat_selection": {
+            "count": 0
+          }
+        }
+      },
+      "legs": [
+        {
+          "index": 1,
+          "min_duration": 713,
+          "max_duration": 713,
+          "count": 1,
+          "origins": [
+            {
+              "id": 15265,
+              "count": 1
+            }
+          ],
+          "destinations": [
+            {
+              "id": 12389,
+              "count": 1
+            }
+          ]
+        },
+        {
+          "index": 2,
+          "min_duration": 1237,
+          "max_duration": 1710,
+          "count": 2,
+          "origins": [
+            {
+              "id": 12389,
+              "count": 2
+            }
+          ],
+          "destinations": [
+            {
+              "id": 15265,
+              "count": 2
+            }
+          ]
+        }
+      ],
+      "carriers": {
+        "single_carriers": [
+          {
+            "id": -32289,
+            "count": 2,
+            "min_price": 509.96
+          }
+        ],
+        "multiple_carriers": {
+          "count": 0
+        }
+      },
+      "filter_hints": {
+        "enable_direct_filter": false,
+        "enable_one_stop_filter": true,
+        "enable_two_plus_stops_filter": false
+      }
+    },
+    "quote_requests": [],
+    "quotes": [],
+    "repro_urls": {
+      "ps_repro_url": "",
+      "lus_repro_urls": []
+    },
+    "rejected_itineraries": [],
+    "pricing_variants_filters": {
+  
+    },
+    "plugins": [
+      {
+        "@type": "type.googleapis.com/deliveryservice.Creatives",
+        "creatives": [],
+        "status": "COMPLETED",
+        "matches": [
+          {
+            "id_format": "fmt.flexibleSearch",
+            "fields": {
+              "session_id": "17797df7-9f60-4bbe-a8c7-31869e84ec47",
+              "sponsoredText": "Sponsored",
+              "alternatives_inventory_session_status": "INCOMPLETE",
+              "onlyP1": "true"
+            },
+            "analytics_properties": {
+              "id_pixel_creative": "CAM-7929fed9-daa2-4543-91a0-1a0015d75343",
+              "id_creative": "CAM-7929fed9-daa2-4543-91a0-1a0015d75343",
+              "id_campaign": "CAM-7929fed9-daa2-4543-91a0-1a0015d75343",
+              "id_placement": "desktop.flights.dayview/inline",
+              "priority": "HOUSE",
+              "service": "SPONSORED_SERVICE",
+              "id_order": "4352",
+              "currency": "EUR"
+            }
+          }
+        ],
+        "position_to_impression_id": {
+  
+        },
+        "creative_position_to_impression_id": {
+  
+        }
+      },
+      {
+        "@type": "type.googleapis.com/GreenItineraries",
+        "itineraries": {
+          "15265-2502260632--32289-1-12389-2502262025|12389-2503032207--32289-1-15265-2503050037": {
+            "id": "15265-2502260632--32289-1-12389-2502262025|12389-2503032207--32289-1-15265-2503050037",
+            "is_eco_contender": true,
+            "eco_contender_delta": 23.04818,
+            "emissions_in_kg": 440.957,
+            "typical_emissions_in_kg": 573.03,
+            "emissions_delta_in_kg": -132.07303,
+            "emissions_delta_percentage": -23.048182,
+            "emissions_level": "EMISSIONS_LEVEL_LOWER"
+          },
+          "15265-2502260632--32289-1-12389-2502262025|12389-2503030600--32289-1-15265-2503040037": {
+            "id": "15265-2502260632--32289-1-12389-2502262025|12389-2503030600--32289-1-15265-2503040037",
+            "is_eco_contender": true,
+            "eco_contender_delta": 23.04818,
+            "emissions_in_kg": 440.957,
+            "typical_emissions_in_kg": 573.03,
+            "emissions_delta_in_kg": -132.07303,
+            "emissions_delta_percentage": -23.048182,
+            "emissions_level": "EMISSIONS_LEVEL_LOWER"
+          }
+        },
+        "typical_emissions_in_kg": 573.03
+      }
+    ]
+  }
