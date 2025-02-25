@@ -234,7 +234,7 @@ JAZZMIN_SETTINGS = {
         "FlightAPI.Passenger": "fas fa-users",
         "FlightAPI.Payment": "fas fa-credit-card",
         "FlightAPI.FlightBooking": "fas fa-plane",
-        "FlightAPI.Ticket": "fas fa-ticket-alt",
+        "FlightAPI.SendTicket": "fas fa-ticket-alt",
         "admin.LogEntry": "fas fa-clipboard-list",
         "auth.User": "fas fa-user-tie",
         "auth.Group": "fas fa-building",

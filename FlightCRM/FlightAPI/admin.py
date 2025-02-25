@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Customer, Passenger, Payment, FlightBooking, Ticket, Airport
+from .models import Customer, Passenger, Payment, FlightBooking, SendTicket, Airport
 from django import forms
 from datetime import date
 from rangefilter.filters import DateRangeFilter
@@ -155,30 +155,36 @@ class FlightBookingAdmin(admin.ModelAdmin):
 
         
 
-
-class TicketAdminForm(forms.ModelForm):
-    class Meta:
-        model = Ticket
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(TicketAdminForm, self).__init__(*args, **kwargs)
-        self.help_texts = {
-            'note': "This feature allows you to send tickets via email in a professional format. Ensure that the information is accurate as it represents official communication."
-        }
-
-@admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    form = TicketAdminForm
-    fieldsets = (
-        (None, {
-            'fields': ('customer', 'pdf_file', 'message'),
-        }),
-        ('Important Notice', {
-            'fields': (),
-            'description': 'This feature allows you to send tickets via email in a professional format. Ensure that the information is accurate as it represents official communication.',
-        }),
-    )
+    list_display = ('get_booking_id', 'get_passenger_full_name', 'get_cardholder_name', 'get_customer_email', 'get_customer_phone_number', 'get_booking_status', 'airline_confirmation_number', 'e_ticket_number')
+    search_fields = ('booking__booking_id', 'e_ticket_number', 'airline_confirmation_number')
+    list_filter = ('booking__status', 'booking__customer__email', 'booking__payment__cardholder_name')
+    def get_booking_id(self, obj):
+        return obj.booking.booking_id
+    get_booking_id.short_description = 'Booking ID'
+    
+    def get_passenger_full_name(self, obj):
+        return f"{obj.passenger.first_name} {obj.passenger.last_name}"
+    get_passenger_full_name.short_description = 'Passenger'
+    
+    def get_cardholder_name(self, obj):
+        return obj.booking.payment.cardholder_name
+    get_cardholder_name.short_description = 'Cardholder Name'
+    
+    def get_customer_email(self, obj):
+        return obj.booking.customer.email
+    get_customer_email.short_description = 'Customer Email'
+    
+    def get_customer_phone_number(self, obj):
+        return obj.booking.customer.phone_number
+    get_customer_phone_number.short_description = 'Customer Phone Number'
+    
+    def get_booking_status(self, obj):
+        return obj.booking.status
+    get_booking_status.short_description = 'Booking Status'
+
+admin.site.register(SendTicket, TicketAdmin)
+
 
 
 LogEntry._meta.verbose_name = ("Track Staff Activity")
@@ -204,3 +210,12 @@ class LogEntryAdmin(admin.ModelAdmin):
         return False
 
 admin.site.register(LogEntry, LogEntryAdmin)
+
+
+'''
+PNR - Airline Confirmation Number,
+Airline Info,
+Ticket Number,
+
+
+'''

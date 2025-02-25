@@ -34,9 +34,12 @@ class Passenger(models.Model):
     gender = models.CharField(max_length=10)
 
     def __str__(self):
-        # Format the full name with middle name only if it exists
-        full_name = f"{self.first_name} {self.middle_name} {self.last_name}".replace("  ", " ")
-        return f"{full_name} - {self.customer.email}"
+        booking_ids = self.flights.values_list('booking_id', flat=True)
+        if booking_ids:
+            booking_id_str = ', '.join(booking_ids)
+        else:
+            booking_id_str = 'NA'
+        return f"{booking_id_str} - {self.first_name} {self.last_name}"
 
     def get_age(self):
         today = date.today()
@@ -133,7 +136,7 @@ class FlightBooking(models.Model):
 
     def __str__(self):
         passenger_names = ', '.join([f"{p.first_name} {p.middle_name} {p.last_name}".replace("  ", " ") for p in self.passengers.all()])
-        return f"{self.customer.email} - Passengers: {passenger_names}"
+        return f"{self.booking_id}"
 
 
 class Ticket(models.Model):
@@ -144,7 +147,14 @@ class Ticket(models.Model):
     def __str__(self):
         return f"Ticket for {self.customer.email} - {self.pdf_file.name}"
 
-    class Meta:
-        verbose_name = "Send Ticket"
-        verbose_name_plural = "Send Tickets"
+
+class SendTicket(models.Model):
+    booking = models.ForeignKey(FlightBooking, on_delete=models.CASCADE, related_name='tickets')
+    passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE, related_name='tickets')
+    airline_confirmation_number = models.CharField(max_length=20)
+    e_ticket_number = models.CharField(max_length=20, unique=True)
+
+    def __str__(self):
+        return f"Ticket for {self.passenger.first_name} {self.passenger.last_name}"
+
 

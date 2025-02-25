@@ -229,7 +229,6 @@ class FlightRoundTrip(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-from django.shortcuts import render
 
 class CustomerResponseView(APIView):
 
@@ -242,12 +241,12 @@ class CustomerResponseView(APIView):
 
         if customer_response == 'accept':
             booking.customer_approval_status = 'approved'
-            message = 'Booking accepted successfully'
+            message = 'Autheticated Successfully'
         elif customer_response == 'reject':
             booking.customer_approval_status = 'denied'
-            message = 'Booking rejected successfully'
+            message = 'Authetication Rejected'
         else:
-            message = 'HTTP_400_BAD_REQUEST | Permission Denied'
+            message = 'Invalid Request & Permission Denied'
             return render(request, 'customerResponse.html', {'message': message})
 
         booking.save()
@@ -265,3 +264,4 @@ def custom_403_view(request, exception):
 
 def custom_400_view(request, exception):
     return render(request, 'Errors/400_Bad_Request.html', status=400)
+
