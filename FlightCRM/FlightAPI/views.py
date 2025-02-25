@@ -181,7 +181,7 @@ class FlightRoundTrip(APIView):
             api_url = f"https://api.flightapi.io/roundtrip/{FLIGHT_KEY}/{source}/{destination}/{outbound}/{inbound}/{adults}/{children}/{infants}/{ticket_class}/USD"
             try:
                 response = requests.get(api_url)
-                response.raise_for_status()  # Raise an HTTPError for bad responses
+                response.raise_for_status()
             except requests.exceptions.HTTPError as http_err:
                 return Response({"error": f"HTTP error occurred: {http_err}"}, status=response.status_code)
             except Exception as err:
@@ -190,13 +190,10 @@ class FlightRoundTrip(APIView):
             if response.status_code == 200:
                 data = response.json()
                 
-                # Create a mapping from carrier IDs to carrier names
                 carrier_map = {carrier["id"]: carrier["name"] for carrier in data.get("carriers", [])}
                 
-                # Create a mapping from leg IDs to leg details
                 legs_map = {leg["id"]: leg for leg in data.get("legs", [])}
                 
-                # Extract flight details
                 flight_details = []
                 for itinerary in data.get("itineraries", []):
                     total_price = itinerary.get("pricing_options", [{}])[0].get("price", {}).get("amount", "Unknown")
@@ -232,23 +229,29 @@ class FlightRoundTrip(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+from django.shortcuts import render
+
 class CustomerResponseView(APIView):
-    
+
     def get(self, request, booking_id, email_id, customer_response):
         booking = get_object_or_404(FlightBooking, booking_id=booking_id, customer__email=email_id)
         
+        if booking.customer_approval_status in ['approved', 'denied']:
+            message = 'Link is Expired !'
+            return render(request, 'customerResponse.html', {'message': message})
+
         if customer_response == 'accept':
             booking.customer_approval_status = 'approved'
+            message = 'Booking accepted successfully'
         elif customer_response == 'reject':
             booking.customer_approval_status = 'denied'
+            message = 'Booking rejected successfully'
         else:
-            return HttpResponse(f'HTTP_400_BAD_REQUEST | Permission Denied')
-        
+            message = 'HTTP_400_BAD_REQUEST | Permission Denied'
+            return render(request, 'customerResponse.html', {'message': message})
+
         booking.save()
-        
-        return HttpResponse(f'Booking changes {customer_response}ed successfully')
-
-
+        return render(request, 'customerResponse.html', {'message': message})
 
 
 def custom_404_view(request, exception):
