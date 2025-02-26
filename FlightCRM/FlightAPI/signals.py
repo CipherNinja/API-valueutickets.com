@@ -1,6 +1,6 @@
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from .models import Customer, Passenger, Payment, FlightBooking
+from .models import Customer, Passenger, Payment, FlightBooking, SendTicket, Airport
 import random
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -8,6 +8,8 @@ from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.contrib import messages
+
 
 @receiver(pre_save, sender=FlightBooking)
 def generate_booking_id(sender, instance, **kwargs):
@@ -177,3 +179,68 @@ def send_booking_update_email(sender, instance, created, **kwargs):
                 msg.attach_alternative(html_content, "text/html")
                 msg.send()
 
+
+
+
+
+import logging
+
+# Create a logger
+logger = logging.getLogger(__name__)
+
+@receiver(pre_save, sender=FlightBooking)
+def check_status_transition(sender, instance, **kwargs):
+    if not instance.pk:
+        instance._previous_status = None
+    else:
+        instance._previous_status = FlightBooking.objects.get(pk=instance.pk).status
+
+@receiver(post_save, sender=FlightBooking)
+def send_ticket_confirmation(sender, instance, **kwargs):
+    if instance._previous_status != 'confirmed' and instance.status == 'confirmed':
+        send_ticket_exists = SendTicket.objects.filter(booking=instance).exists()
+        if send_ticket_exists:
+            departure_airport = Airport.objects.get(iata=instance.departure_iata.upper())
+            arrival_airport = Airport.objects.get(iata=instance.arrival_iata.upper())
+            send_tickets = SendTicket.objects.filter(booking=instance)
+
+            # Prepare context for email template
+            context = {
+                'customer_name': instance.customer.email,
+                'booking': {
+                    'flight_name': instance.flight_name,
+                    'departure_iata': instance.departure_iata,
+                    'arrival_iata': instance.arrival_iata,
+                    'departure_date': instance.departure_date,
+                    'arrival_date': instance.arrival_date,
+                    'payble_amount': instance.payble_amount,
+                },
+                'departure_airport': departure_airport,
+                'arrival_airport': arrival_airport,
+                'tickets': [{
+                    'passenger_name': f"{ticket.passenger.first_name} {ticket.passenger.middle_name} {ticket.passenger.last_name}".replace("  ", " "),
+                    'dob': ticket.passenger.dob,
+                    'gender': ticket.passenger.gender,
+                    'e_ticket_number': ticket.e_ticket_number,
+                    'airline_confirmation_number': ticket.airline_confirmation_number
+                } for ticket in send_tickets]
+            }
+
+            subject = 'Your Flight Booking Confirmation & Details'
+            from_email = 'no-reply@valueutickets.com'
+            to = instance.customer.email
+
+            # Render the HTML email template
+            html_content = render_to_string('ticket_delivery.html', context)
+            text_content = strip_tags(html_content)
+
+            msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+        else:
+            instance.status = 'complete'
+            instance.save(update_fields=['status'])
+            logger.warning(
+                'Please add ticket details before confirming the Flight Booking | status is now set to complete'
+            )
+    

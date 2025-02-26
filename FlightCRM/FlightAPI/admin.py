@@ -8,6 +8,14 @@ from django.contrib.admin.models import LogEntry
 from datetime import timedelta
 from django.utils.timezone import now
 from django.utils.html import format_html
+from .signals import send_ticket_confirmation
+
+
+
+@admin.register(Airport)
+class AirportAdmin(admin.ModelAdmin):
+    list_display = ('city', 'airport_name', 'iata', 'icao', 'faa')
+    search_fields = ('city', 'airport_name', 'iata', 'icao', 'faa')
 
 
 @admin.register(Customer)
@@ -152,8 +160,7 @@ class FlightBookingAdmin(admin.ModelAdmin):
     def add_view(self, request, form_url='', extra_context=None):
         extra_context = extra_context or {}
         return super().add_view(request, form_url, extra_context=extra_context)
-
-        
+    
 
 class TicketAdmin(admin.ModelAdmin):
     list_display = ('get_booking_id', 'get_passenger_full_name', 'get_cardholder_name', 'get_customer_email', 'get_customer_phone_number', 'get_booking_status', 'airline_confirmation_number', 'e_ticket_number')

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Ticket Confirmation - Valueu Tickets</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+        .container { width: 80%; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); border-top: 4px solid #1E90FF; }
+        .header { text-align: center; padding: 20px 0; background-color: #F08080; color: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px; }
+        .header img { max-width: 150px; }
+        .header h1 { margin: 0; font-size: 24px; }
+        .content { margin: 20px 0; }
+        .content p { line-height: 1.6; color: #333333; }
+        .details table { width: 100%; margin: 20px 0; border-collapse: collapse; }
+        .details th, .details td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        .details th { background-color: #f4f4f4; }
+        .button-container { text-align: center; margin: 20px 0; }
+        .button { padding: 10px 20px; border: none; border-radius: 5px; color: white; font-size: 16px; text-decoration: none; margin: 5px; display: inline-block; width: 100%; max-width: 200px; }
+        .button-accept { background-color: #28a745; }
+        .footer { background-color: #1E90FF; color: #ffffff; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; padding: 20px 0; }
+        .footer p, .footer a { color: #ffffff; margin: 5px 0; text-decoration: none; }
+        .footer .social-icons { text-align: center; margin: 10px 0; }
+        .footer .social-icons a { color: #ffffff; margin: 0 10px; font-size: 20px; }
+        .footer .contact-info { text-align: center; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://valueutickets.com/assets/logo-nobg-6nxeXFvr.png" alt="Company Logo">
+            <h1>Flight Ticket Confirmation</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ customer_name }},</p>
+            <p>We are pleased to confirm your flight booking. Below are the details:</p>
+        </div>
+        <div class="details">
+            <h2>Flight Information</h2>
+            <table>
+                <tr>
+                    <th>Flight Name</th>
+                    <td>{{ booking.flight_name }}</td>
+                </tr>
+                <tr>
+                    <th>Departure</th>
+                    <td>{{ booking.departure_iata }} ({{ departure_airport.city }} - {{ departure_airport.airport_name }}) on {{ booking.departure_date }}</td>
+                </tr>
+                <tr>
+                    <th>Arrival</th>
+                    <td>{{ booking.arrival_iata }} ({{ arrival_airport.city }} - {{ arrival_airport.airport_name }}) on {{ booking.arrival_date }}</td>
+                </tr>
+                <tr>
+                    <th>Total Price</th>
+                    <td>${{ booking.payble_amount }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="details">
+            <h2>Traveller Information</h2>
+            {% for ticket in tickets %}
+            <table>
+                <tr>
+                    <th>Passenger Name</th>
+                    <td>{{ ticket.passenger_name }}</td>
+                </tr>
+                <tr>
+                    <th>Date of Birth</th>
+                    <td>{{ ticket.dob }}</td>
+                </tr>
+                <tr>
+                    <th>Gender</th>
+                    <td>{{ ticket.gender }}</td>
+                </tr>
+                <tr>
+                    <th>E-Ticket Number</th>
+                    <td>{{ ticket.e_ticket_number }}</td>
+                </tr>
+                <tr>
+                    <th>Airline Confirmation Number</th>
+                    <td>{{ ticket.airline_confirmation_number }}</td>
+                </tr>
+            </table>
+            {% endfor %}
+        </div>
+        <div class="button-container">
+            <a href="#" class="button button-accept">View Booking</a>
+        </div>
+        <div class="footer">
+            <div class="social-icons">
+                <a href="https://x.com"><i class="fab fa-twitter"></i></a>
+                <a href="https://facebook.com"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://instagram.com"><i class="fab fa-instagram"></i></a>
+                <a href="https://linkedin.com"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <div class="contact-info">
+                <p>Contact Us: +1 (833) 931-6548 | support@valueutickets.com</p>
+                <p>Valueu Tickets LLC, 30 N Gould St #36918, Sheridan, WY 82801, United States</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
