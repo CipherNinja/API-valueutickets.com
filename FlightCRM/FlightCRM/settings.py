@@ -230,7 +230,8 @@ JAZZMIN_SETTINGS = {
         # Define other links here
     ],
     "icons": {
-        "FlightAPI.Customer": "fas fa-road",
+        "FlightAPI.Airport": "fas fa-road",
+        "FlightAPI.Customer": "fas fa-user",
         "FlightAPI.Passenger": "fas fa-users",
         "FlightAPI.Payment": "fas fa-credit-card",
         "FlightAPI.FlightBooking": "fas fa-plane",
