@@ -182,12 +182,6 @@ def send_booking_update_email(sender, instance, created, **kwargs):
 
 
 
-
-import logging
-
-# Create a logger
-logger = logging.getLogger(__name__)
-
 @receiver(pre_save, sender=FlightBooking)
 def check_status_transition(sender, instance, **kwargs):
     if not instance.pk:
@@ -240,7 +234,5 @@ def send_ticket_confirmation(sender, instance, **kwargs):
         else:
             instance.status = 'complete'
             instance.save(update_fields=['status'])
-            logger.warning(
-                'Please add ticket details before confirming the Flight Booking | status is now set to complete'
-            )
+            
     
