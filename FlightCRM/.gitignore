@@ -1,0 +1,19 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+FlightAPI/__pycache__/
+FlightAPI/migrations/__pycache__/
+FlightCRM/__pycache__/
+
+# Migration files
+FlightAPI/migrations/0002_alter_flightbooking_customer_approval_status.py
+FlightAPI/migrations/0003_alter_ticket_options_flightbooking_status_and_more.py
+FlightAPI/migrations/0004_flightbooking_return_arrival_date_and_more.py
+
+# Database
+db.sqlite3
+
+# Static files
+static/
+staticfiles/jazzmin/
+staticfiles/rest_framework/
+staticfiles/vendor/

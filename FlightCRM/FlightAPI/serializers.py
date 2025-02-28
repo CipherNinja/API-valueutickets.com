@@ -52,6 +52,10 @@ class FlightBookingCreateSerializer(serializers.Serializer):
     arrival_iata = serializers.CharField(max_length=4,required=True)
     departure_date = serializers.DateTimeField(required=True)
     arrival_date = serializers.DateTimeField(required=True)
+    return_departure_iata = serializers.CharField(max_length=4, required=False, allow_null=True, allow_blank=True)
+    return_arrival_iata = serializers.CharField(max_length=4, required=False, allow_null=True, allow_blank=True)
+    return_departure_date = serializers.DateTimeField(required=False, allow_null=True)
+    return_arrival_date = serializers.DateTimeField(required=False, allow_null=True)
     passengers = serializers.ListField(
         child=serializers.DictField(), required=True
     )
@@ -96,6 +100,10 @@ class FlightBookingCreateSerializer(serializers.Serializer):
             arrival_iata=validated_data['arrival_iata'],
             departure_date=validated_data['departure_date'],
             arrival_date=validated_data['arrival_date'],
+            return_departure_iata=validated_data.get('return_departure_iata', None),
+            return_arrival_iata=validated_data.get('return_arrival_iata', None),
+            return_departure_date=validated_data.get('return_departure_date', None),
+            return_arrival_date=validated_data.get('return_arrival_date', None),
             flight_cancellation_protection=validated_data['flight_cancellation_protection'],
             sms_support=validated_data['sms_support'],
             baggage_protection=validated_data['baggage_protection'],

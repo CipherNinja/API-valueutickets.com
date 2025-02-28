@@ -108,12 +108,14 @@ class PaymentAdmin(admin.ModelAdmin):
 class FlightBookingAdmin(admin.ModelAdmin):
     list_display = (
         'booking_id', 'customer', 'get_passenger_names', 'payment', 'flight_name', 
-        'departure_iata', 'arrival_iata', 'departure_date', 'arrival_date', 
+        'departure_iata', 'arrival_iata', 'departure_date', 'arrival_date',
+        'return_departure_iata', 'return_arrival_iata', 'return_departure_date', 'return_arrival_date', 
         'flight_cancellation_protection', 'sms_support', 'baggage_protection', 
         'premium_support', 'total_refund_protection', 'payble_amount', 'agent', 'status', 'customer_approval_status',
     )
     list_filter = (
         'booking_id', 'customer', 'payment__cardholder_name', 'departure_iata', 'arrival_iata', 'status', 'customer_approval_status',
+        'return_departure_iata', 'return_arrival_iata',
         # ('departure_date', DateRangeFilter)
     )
     search_fields = ('booking_id',)
@@ -121,6 +123,27 @@ class FlightBookingAdmin(admin.ModelAdmin):
     filter_horizontal = ('passengers',)
     autocomplete_fields = ('customer',)
     readonly_fields = ('booking_id', 'customer_approval_status')
+
+    fieldsets = (
+        ('Flight Information', {
+            'fields': (
+                'flight_name', 'departure_iata', 'arrival_iata', 'departure_date', 'arrival_date',
+                'return_departure_iata', 'return_arrival_iata', 'return_departure_date', 'return_arrival_date', 'customer_approval_status',
+            )
+        }),
+        ('Customer Information', {
+            'fields': (
+                'customer', 'passengers', 'agent'
+            )
+        }),
+        ('Payment Information', {
+            'fields': (
+                'payment', 'payble_amount','booking_id', 'flight_cancellation_protection', 'sms_support', 'baggage_protection', 'premium_support', 
+                'total_refund_protection', 'status',
+            )
+        }),
+        
+    )
 
     def get_passenger_names(self, obj):
         passenger_links = []

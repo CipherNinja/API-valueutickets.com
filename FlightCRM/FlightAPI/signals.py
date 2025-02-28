@@ -24,6 +24,13 @@ def generate_booking_id(sender, instance, **kwargs):
 
 
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.core.mail import EmailMultiAlternatives
+from .models import FlightBooking
+
 @receiver(post_save, sender=FlightBooking)
 def send_booking_confirmation_email(sender, instance, created, **kwargs):
     if created:
@@ -39,6 +46,23 @@ def send_booking_confirmation_email(sender, instance, created, **kwargs):
             "booking_id": instance.booking_id,
         }
 
+        # Check if the roundtrip details are filled
+        is_roundtrip = all([
+            instance.return_departure_iata,
+            instance.return_arrival_iata,
+            instance.return_departure_date,
+            instance.return_arrival_date
+        ])
+
+        # Add roundtrip details to the flight details if available
+        if is_roundtrip:
+            flight_details.update({
+                "return_departure_iata": instance.return_departure_iata,
+                "return_arrival_iata": instance.return_arrival_iata,
+                "return_departure_date": instance.return_departure_date,
+                "return_arrival_date": instance.return_arrival_date,
+            })
+
         # Render the HTML email template with context
         html_content = render_to_string('order_confirmation.html', {
             'company_logo_url': 'path/to/company-logo.png',
@@ -50,6 +74,11 @@ def send_booking_confirmation_email(sender, instance, created, **kwargs):
             'arrival_date': flight_details['arrival_date'],
             'payable_amount': flight_details['payable_amount'],
             'booking_id': flight_details['booking_id'],
+            # Include roundtrip details in the email context if available
+            'return_departure_iata': flight_details.get('return_departure_iata', None),
+            'return_arrival_iata': flight_details.get('return_arrival_iata', None),
+            'return_departure_date': flight_details.get('return_departure_date', None),
+            'return_arrival_date': flight_details.get('return_arrival_date', None),
         })
         text_content = strip_tags(html_content)  # Convert HTML to plain text
 
@@ -130,7 +159,8 @@ def send_booking_update_email(sender, instance, created, **kwargs):
                 'flight_cancellation_protection', 'sms_support', 'baggage_protection', 
                 'premium_support', 'total_refund_protection', 'payble_amount', 
                 'flight_name', 'departure_iata', 'arrival_iata', 'departure_date', 
-                'arrival_date'
+                'arrival_date', 'return_departure_iata', 'return_arrival_iata', 
+                'return_departure_date', 'return_arrival_date'
             ]
 
             for field in fields_to_check:
@@ -169,7 +199,8 @@ def send_booking_update_email(sender, instance, created, **kwargs):
                     'booking_id': instance.booking_id,
                     'changes': changes,
                     'customer_email': instance.customer.email,
-                    'payment_details': payment_details
+                    'payment_details': payment_details,
+                    
                 }
                 
                 text_content = 'Please update the details for your flight booking.'
@@ -221,7 +252,7 @@ def send_ticket_confirmation(sender, instance, **kwargs):
             }
 
             subject = 'Your Flight Booking Confirmation & Details'
-            from_email = 'no-reply@valueutickets.com'
+            from_email = 'customerservice@valueutickets.com'
             to = instance.customer.email
 
             # Render the HTML email template

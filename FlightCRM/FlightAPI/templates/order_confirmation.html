@@ -129,6 +129,24 @@
                     <th>Arrival Date</th>
                     <td>{{ arrival_date }}</td>
                 </tr>
+                {% if return_departure_iata and return_arrival_iata and return_departure_date and return_arrival_date %}
+                <tr>
+                    <th>Return Departure</th>
+                    <td>{{ return_departure_iata }}</td>
+                </tr>
+                <tr>
+                    <th>Return Arrival</th>
+                    <td>{{ return_arrival_iata }}</td>
+                </tr>
+                <tr>
+                    <th>Return Departure Date</th>
+                    <td>{{ return_departure_date }}</td>
+                </tr>
+                <tr>
+                    <th>Return Arrival Date</th>
+                    <td>{{ return_arrival_date }}</td>
+                </tr>
+                {% endif %}
                 <tr>
                     <th>Total Amount</th>
                     <td>{{ payable_amount }}</td>
