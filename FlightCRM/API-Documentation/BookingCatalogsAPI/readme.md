@@ -31,33 +31,41 @@ Content-Type: application/json
 **Body:**
 ```json
 {
-    "flight_name": "Flight ABC123",
-    "departure_iata": "JFK",
-    "arrival_iata": "LHR",
-    "departure_date": "2025-03-15T10:00:00Z",
-    "arrival_date": "2025-03-15T18:00:00Z",
+    "flight_name": "AI202",
+    "departure_iata": "DEL",
+    "arrival_iata": "JFK",
+    "departure_date": "2023-03-15T14:30:00Z",
+    "arrival_date": "2023-03-15T20:30:00Z",
     "passenger": [
         {
-            "name": "John A. Doe",
+            "first_name": "John",
+            "middle_name": "A.",
+            "last_name": "Doe",
             "dob": "1990-01-01",
-            "gender": "Male",
-            "age": 35
+            "gender": "Male"
+        },
+        {
+            "first_name": "Jane",
+            "middle_name": "B.",
+            "last_name": "Doe",
+            "dob": "1992-02-02",
+            "gender": "Female"
         }
     ],
     "contact_billings": {
-        "Email": "user@example.com",
-        "phone_number": "1234567890",
+        "Email": "customer@example.com",
+        "phone_number": "+1234567890",
         "cardholder_name": "John Doe",
-        "card_number": "1234"
+        "card_number": "**** **** **** 1234"
     },
     "orderings": {
-        "payble_amount": 500.0,
-        "flight_cancellation_protection": 15,
-        "sms_support": 2,
-        "baggage_protection": 15,
-        "premium_support": 5,
-        "total_refund_protection": 100,
-        "total_amount": 637.0
+        "payble_amount": 500.00,
+        "flight_cancellation_protection": 15.00,
+        "sms_support": 2.00,
+        "baggage_protection": 15.00,
+        "premium_support": 5.00,
+        "total_refund_protection": 100.00,
+        "total_amount": 637.00
     }
 }
 ```
@@ -114,6 +122,10 @@ axios.post('http://crm.valueutickets.com/api/login/', loginData, {
   const arrivalIata = data.arrival_iata;
   const departureDate = data.departure_date;
   const arrivalDate = data.arrival_date;
+  const returnDepartureIata = data.return_departure_iata;
+  const returnArrivalIata = data.return_arrival_iata;
+  const returnDepartureDate = data.return_departure_date;
+  const returnArrivalDate = data.return_arrival_date;
 
   const passengers = data.passenger;
   const contactBillings = data.contact_billings;
@@ -125,6 +137,14 @@ axios.post('http://crm.valueutickets.com/api/login/', loginData, {
   console.log('Arrival IATA:', arrivalIata);
   console.log('Departure Date:', departureDate);
   console.log('Arrival Date:', arrivalDate);
+  
+  // Print return trip details if available
+  if (returnDepartureIata && returnArrivalIata && returnDepartureDate && returnArrivalDate) {
+    console.log('Return Departure IATA:', returnDepartureIata);
+    console.log('Return Arrival IATA:', returnArrivalIata);
+    console.log('Return Departure Date:', returnDepartureDate);
+    console.log('Return Arrival Date:', returnArrivalDate);
+  }
   
   console.log('Passengers:');
   passengers.forEach(passenger => {
@@ -156,8 +176,4 @@ axios.post('http://crm.valueutickets.com/api/login/', loginData, {
     console.error('Error:', error.message);
   }
 });
-```
-
-This example demonstrates how to send a request to the login API, parse the response, store the parameters in variables, and print them in a loop using Axios in JavaScript.
-
 ```

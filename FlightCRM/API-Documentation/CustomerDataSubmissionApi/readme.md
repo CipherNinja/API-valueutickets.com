@@ -18,7 +18,7 @@ This endpoint handles the creation of a flight booking with all related data (cu
 
 You will need to send a **JSON object** with the following structure:
 
-### **Example Input Data**
+### **Input Data for Onewaytrips**
 
 ```json
 {
@@ -67,6 +67,49 @@ You will need to send a **JSON object** with the following structure:
     "payble_amount": 850.00
 }
 ```
+
+### **Input Data for Roundtrips**
+
+**Status Code:** `200 OK`
+
+**Body:**
+```json
+{
+    "flight_name": "Flight ABC123",
+    "departure_iata": "JFK",
+    "arrival_iata": "LHR",
+    "departure_date": "2025-03-15T10:00:00Z",
+    "arrival_date": "2025-03-15T18:00:00Z",
+    "return_departure_iata": "LHR",
+    "return_arrival_iata": "JFK",
+    "return_departure_date": "2025-03-20T06:00:00Z",
+    "return_arrival_date": "2025-03-20T11:00:00Z",
+    "passenger": [
+        {
+            "name": "John A. Doe",
+            "dob": "1990-01-01",
+            "gender": "Male",
+            "age": 35
+        }
+    ],
+    "contact_billings": {
+        "Email": "user@example.com",
+        "phone_number": "1234567890",
+        "cardholder_name": "John Doe",
+        "card_number": "1234"
+    },
+    "orderings": {
+        "payble_amount": 500.0,
+        "flight_cancellation_protection": 15,
+        "sms_support": 2,
+        "baggage_protection": 15,
+        "premium_support": 5,
+        "total_refund_protection": 100,
+        "total_amount": 637.0
+    }
+}
+```
+
 
 ### **Field Descriptions**
 
@@ -135,7 +178,7 @@ You can test this API using **Postman** or **cURL**. Here’s how to do it:
 ### **Using Postman**
 
 1. **Set the HTTP method** to `POST`.
-2. **URL**: Enter the URL `http://<your-server-url>/api/v2/flight/booking/`.
+2. **URL**: Enter the URL `http://crm.valueutickets.com/api/v2/flight/booking/`.
 3. **Body**: In the "Body" tab, select "raw" and set the type to `JSON`. Then, paste the **input data** in the text area.
 4. **Send** the request.
 5. You should receive a **201 Created** response with a success message and the IDs of the created records.
