@@ -251,6 +251,19 @@ def send_ticket_confirmation(sender, instance, **kwargs):
                 } for ticket in send_tickets]
             }
 
+            # Check if round trip details are available
+            if instance.return_departure_iata and instance.return_arrival_iata:
+                return_departure_airport = Airport.objects.get(iata=instance.return_departure_iata.upper())
+                return_arrival_airport = Airport.objects.get(iata=instance.return_arrival_iata.upper())
+                context['return_trip'] = {
+                    'return_departure_iata': instance.return_departure_iata,
+                    'return_arrival_iata': instance.return_arrival_iata,
+                    'return_departure_date': instance.return_departure_date,
+                    'return_arrival_date': instance.return_arrival_date,
+                    'return_departure_airport': return_departure_airport,
+                    'return_arrival_airport': return_arrival_airport,
+                }
+
             subject = 'Your Flight Booking Confirmation & Details'
             from_email = 'customerservice@valueutickets.com'
             to = instance.customer.email

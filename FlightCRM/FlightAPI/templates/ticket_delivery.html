@@ -50,11 +50,24 @@
                     <th>Arrival</th>
                     <td>{{ booking.arrival_iata }} ({{ arrival_airport.city }} - {{ arrival_airport.airport_name }}) on {{ booking.arrival_date }}</td>
                 </tr>
+            </table>
+            {% if return_trip %}
+            <h2>Return Trip Information</h2>
+            <table>
                 <tr>
-                    <th>Total Price</th>
-                    <td>${{ booking.payble_amount }}</td>
+                    <th>Return Airline</th>
+                    <td>{{ booking.flight_name }}</td>
+                </tr>
+                <tr>
+                    <th>Return Departure</th>
+                    <td>{{ return_trip.return_departure_iata }} ({{ return_trip.return_departure_airport.city }} - {{ return_trip.return_departure_airport.airport_name }}) on {{ return_trip.return_departure_date }}</td>
+                </tr>
+                <tr>
+                    <th>Return Arrival</th>
+                    <td>{{ return_trip.return_arrival_iata }} ({{ return_trip.return_arrival_airport.city }} - {{ return_trip.return_arrival_airport.airport_name }}) on {{ return_trip.return_arrival_date }}</td>
                 </tr>
             </table>
+            {% endif %}
         </div>
         <div class="details">
             <h2>Traveller Information</h2>
@@ -82,6 +95,15 @@
                 </tr>
             </table>
             {% endfor %}
+        </div>
+        <div class="details">
+            <h2>Price Details</h2>
+            <table>
+                <tr>
+                    <th>Total Price</th>
+                    <td>${{ booking.payble_amount }}</td>
+                </tr>
+            </table>
         </div>
         <div class="button-container">
             <a href="#" class="button button-accept">View Booking</a>
