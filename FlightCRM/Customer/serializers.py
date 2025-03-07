@@ -22,3 +22,4 @@ class contactUsSerializer(serializers.Serializer):
             message=message
         )
         contact.save()
+        return contact
