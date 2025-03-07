@@ -12,6 +12,7 @@ class ContactUsCarrier(APIView):
         
         serializer = contactUsSerializer(data=request.data)
         if serializer.is_valid():    
+            serializer.save()
             success_message = {
                 "message":"Data is added to inventory ✅"
             }
