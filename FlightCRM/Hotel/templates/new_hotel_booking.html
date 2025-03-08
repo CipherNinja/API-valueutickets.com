@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid #1E90FF; /* Blue */
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #dc3545; /* Orange */
+            color: #ffffff;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .header img {
+            max-width: 150px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            margin: 20px 0;
+        }
+        .content p {
+            line-height: 1.6;
+            color: #333333;
+        }
+        .details {
+            margin-top: 20px;
+        }
+        .details h2 {
+            margin-bottom: 10px;
+            color: #1E90FF; /* Blue */
+            border-bottom: 2px solid #1E90FF;
+            padding-bottom: 5px;
+        }
+        .details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .details th, .details td {
+            padding: 10px;
+            border: 1px solid #dddddd;
+            text-align: left;
+        }
+        .details th {
+            background-color: #dc3545;
+            color: #ffffff;
+        }
+        .footer {
+            background-color: #1E90FF;
+            color: #ffffff;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .footer a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://valueutickets.com/assets/logo-nobg-6nxeXFvr.png" alt="Company Logo">
+            <h1>Hotel Booking Confirmation</h1>
+        </div>
+        <div class="content">
+            <p>Dear {{ customer_email }},</p>
+            <p>Thank you for booking with Valueu Tickets! Below are the details of your hotel booking:</p>
+        </div>
+        <div class="details">
+            <h2>Booking Details:</h2>
+            <table>
+                <tr>
+                    <th>Booking ID</th>
+                    <td>{{ booking_id }}</td>
+                </tr>
+                <tr>
+                    <th>Destination</th>
+                    <td>{{ destination }}</td>
+                </tr>
+                <tr>
+                    <th>Check-in Date</th>
+                    <td>{{ checkin_date }}</td>
+                </tr>
+                <tr>
+                    <th>Check-out Date</th>
+                    <td>{{ checkout_date }}</td>
+                </tr>
+                <tr>
+                    <th>Number of Adults</th>
+                    <td>{{ adults }}</td>
+                </tr>
+                <tr>
+                    <th>Number of Children</th>
+                    <td>{{ children }}</td>
+                </tr>
+                <tr>
+                    <th>Number of Infants</th>
+                    <td>{{ infants }}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="content">
+            <p>Our team will review your preferences and ensure a seamless booking process. One of our agents will soon contact you with the finalized hotel booking details to proceed further. Rest assured, we’re here to help you find the perfect stay that suits your convenience. For any urgent queries, please feel free to contact us at <a href="mailto:customerservice@valueutickets.com">customerservice@valueutickets.com</a>.</p>
+        </div>
+        <div class="footer">
+            <p>&copy; Valueu Tickets - All Rights Reserved</p>
+            <a href="https://valueutickets.com">Visit Our Website</a>
+        </div>
+    </div>
+</body>
+</html>
