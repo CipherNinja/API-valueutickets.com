@@ -31,10 +31,10 @@ class FlightBookingCreateView(APIView):
         
         # Validate the data
         if serializer.is_valid():
-            booking_data = serializer.save()
+            saved_data = serializer.save()
             return Response({
                 "message": "Booking successful!",
-                "booking_data":booking_data
+                "booking_data":[saved_data]
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

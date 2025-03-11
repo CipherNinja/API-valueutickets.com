@@ -23,7 +23,7 @@ class HotelBookingAdmin(admin.ModelAdmin):
 
     readonly_fields = ('hotel_booking_id',)  # Make booking ID read-only to prevent accidental edits
 
-    date_hierarchy = 'checkin_datetime'  # Add a date hierarchy navigation bar
+    # date_hierarchy = 'checkin_datetime'  # Add a date hierarchy navigation bar
 
     fieldsets = (
         ('Customer Information', {

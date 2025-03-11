@@ -25,6 +25,7 @@ urlpatterns = [
     re_path(r'^media/(?P<path>.*)$',serve,{'document_root':settings.MEDIA_ROOT}),
     path('',include('FlightAPI.urls')),
     path('',include('Customer.urls')),
+    path('',include("Hotel.urls"))
 ]
 
 

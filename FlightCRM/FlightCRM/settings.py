@@ -247,7 +247,6 @@ JAZZMIN_SETTINGS = {
     
 }
 
-# settings.py
 
 JAZZMIN_UI_TWEAKS = {
     "navbar_small_text": False,
