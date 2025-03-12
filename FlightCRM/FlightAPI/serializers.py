@@ -125,10 +125,11 @@ class FlightBookingCreateSerializer(serializers.Serializer):
 class PassengerSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     age = serializers.SerializerMethodField()
+    ticket_details = serializers.SerializerMethodField()  # New field for ticket information
 
     class Meta:
         model = Passenger
-        fields = ['name', 'dob', 'gender', 'age']
+        fields = ['name', 'dob', 'gender', 'age', 'ticket_details']  # Added 'ticket_details'
 
     def get_name(self, obj):
         return f"{obj.first_name} {obj.middle_name} {obj.last_name}".replace("  ", " ")
@@ -136,6 +137,20 @@ class PassengerSerializer(serializers.ModelSerializer):
     def get_age(self, obj):
         today = date.today()
         return today.year - obj.dob.year - ((today.month, today.day) < (obj.dob.month, obj.dob.day))
+
+    def get_ticket_details(self, obj):
+        # Fetch the related ticket details if available
+        try:
+            ticket = obj.tickets.first()  # Assuming each passenger has one ticket
+            if ticket:
+                return {
+                    "e_ticket_number": ticket.e_ticket_number,
+                    "airline_confirmation_number": ticket.airline_confirmation_number
+                }
+        except Exception:
+            pass
+        return None  # If no ticket data exists
+
 
 class PaymentSerializer(serializers.ModelSerializer):
     card_number_last4 = serializers.SerializerMethodField()
@@ -156,10 +171,23 @@ class FlightBookingSerializer(serializers.ModelSerializer):
     passenger = PassengerSerializer(many=True, source='passengers')
     contact_billings = serializers.SerializerMethodField()
     orderings = serializers.SerializerMethodField()
+    return_flight = serializers.SerializerMethodField()  # Added for return flight data
+    TicketStatus = serializers.SerializerMethodField()  # Added for Ticket Status
 
     class Meta:
         model = FlightBooking
-        fields = ['flight_name', 'departure_iata', 'arrival_iata', 'departure_date', 'arrival_date', 'passenger', 'contact_billings', 'orderings']
+        fields = [
+            'flight_name', 
+            'departure_iata', 
+            'arrival_iata', 
+            'departure_date', 
+            'arrival_date', 
+            'return_flight',  # New field
+            'passenger', 
+            'contact_billings', 
+            'orderings', 
+            'TicketStatus'  # New field
+        ]
 
     def get_contact_billings(self, obj):
         customer = obj.customer
@@ -179,5 +207,27 @@ class FlightBookingSerializer(serializers.ModelSerializer):
             "baggage_protection": 15 if obj.baggage_protection else 0,
             "premium_support": 5 if obj.premium_support else 0,
             "total_refund_protection": 100 if obj.total_refund_protection else 0,
-            "total_amount": obj.payble_amount + (15 if obj.flight_cancellation_protection else 0) + (2 if obj.sms_support else 0) + (15 if obj.baggage_protection else 0) + (5 if obj.premium_support else 0) + (100 if obj.total_refund_protection else 0)
+            "total_amount": obj.payble_amount + (15 if obj.flight_cancellation_protection else 0) + 
+                             (2 if obj.sms_support else 0) + (15 if obj.baggage_protection else 0) + 
+                             (5 if obj.premium_support else 0) + (100 if obj.total_refund_protection else 0)
         }
+
+    def get_return_flight(self, obj):
+        # Check if return flight data exists, otherwise return None
+        if obj.return_departure_iata and obj.return_arrival_iata and obj.return_departure_date and obj.return_arrival_date:
+            return {
+                "return_departure_iata": obj.return_departure_iata,
+                "return_arrival_iata": obj.return_arrival_iata,
+                "return_departure_date": obj.return_departure_date,
+                "return_arrival_date": obj.return_arrival_date
+            }
+        return None
+
+    def get_TicketStatus(self, obj):
+        # Check the status and return the TicketStatus value
+        if obj.status.lower() in ['confirmed']:
+            return "Confirmed"
+        elif obj.status.lower() in ['cancelled']:
+            return "Cancelled"
+        else:
+            return "Pending"

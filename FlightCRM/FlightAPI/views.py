@@ -39,7 +39,11 @@ class FlightBookingCreateView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class LoginView(APIView):
+    r'''
+    {"booking_id":"VU2029000","email":"priyesh.kumarjii@gmail.com"}
+    '''
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
         booking_id = request.data.get('booking_id')
