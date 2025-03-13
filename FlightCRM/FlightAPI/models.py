@@ -155,8 +155,8 @@ class Ticket(models.Model):
 class SendTicket(models.Model):
     booking = models.ForeignKey(FlightBooking, on_delete=models.CASCADE, related_name='tickets')
     passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE, related_name='tickets')
-    airline_confirmation_number = models.CharField(max_length=20)
-    e_ticket_number = models.CharField(max_length=20, unique=True)
+    airline_confirmation_number = models.CharField(max_length=100)
+    e_ticket_number = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return f"Ticket for {self.passenger.first_name} {self.passenger.last_name}"
