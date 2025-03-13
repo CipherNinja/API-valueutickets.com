@@ -1,4 +1,3 @@
-```markdown
 # Hotel Booking API
 
 ## Overview
