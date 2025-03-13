@@ -2,15 +2,13 @@ from django.contrib import admin
 from .models import Customer, Passenger, Payment, FlightBooking, SendTicket, Airport
 from django import forms
 from datetime import date
-from rangefilter.filters import DateRangeFilter
 from django.contrib import admin
 from django.contrib.admin.models import LogEntry
 from datetime import timedelta
 from django.utils.timezone import now
 from django.utils.html import format_html
 from .signals import send_ticket_confirmation
-
-
+from .GeneratePDF.Flightpdf import export_to_excel
 
 @admin.register(Airport)
 class AirportAdmin(admin.ModelAdmin):
@@ -113,10 +111,10 @@ class FlightBookingAdmin(admin.ModelAdmin):
         'flight_cancellation_protection', 'sms_support', 'baggage_protection', 
         'premium_support', 'total_refund_protection', 'payble_amount', 'agent', 'status', 'customer_approval_status',
     )
+    actions = [export_to_excel]
     list_filter = (
         'booking_id', 'customer', 'payment__cardholder_name', 'departure_iata', 'arrival_iata', 'status', 'customer_approval_status',
         'return_departure_iata', 'return_arrival_iata',
-        # ('departure_date', DateRangeFilter)
     )
     search_fields = ('booking_id',)
 

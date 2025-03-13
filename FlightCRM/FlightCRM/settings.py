@@ -226,6 +226,7 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Welcome to the ValueuTickets CRM",
     "search_model": "auth.User",
     "user_avatar": None,
+    "custom_css": "css/custom.css",
 
     # UI Customizations
     "topmenu_links": [

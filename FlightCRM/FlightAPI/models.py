@@ -75,7 +75,7 @@ class Payment(models.Model):
         
         # Validate card expiry year format
         if len(str(self.card_expiry_year)) != 4:
-            raise ValidationErr̥r̥ror(_('Card expiry year must be a 4-digit number Example: 2024, 2030, etc.'))
+            raise ValidationError(_('Card expiry year must be a 4-digit number Example: 2024, 2030, etc.'))
         
         # Validate card expiry month
         if self.card_expiry_month < 1 or self.card_expiry_month > 12:
