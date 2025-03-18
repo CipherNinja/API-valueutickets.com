@@ -5,6 +5,18 @@ from django.core.mail import send_mail, EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
+
+@receiver(pre_save, sender=FlightBooking)
+def generate_booking_id(sender, instance, **kwargs):
+    if not instance.booking_id:
+        last_booking = FlightBooking.objects.all().order_by('id').last()
+        if not last_booking:
+            new_id = 2029000
+        else:
+            last_id = int(last_booking.booking_id[2:])
+            new_id = last_id + 1
+        instance.booking_id = f"VU{new_id}"
+
 @receiver(pre_save, sender=FlightBooking, dispatch_uid="track_status_change")
 def track_status_change(sender, instance, **kwargs):
     if instance.pk:
