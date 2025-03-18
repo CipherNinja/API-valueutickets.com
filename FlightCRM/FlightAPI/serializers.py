@@ -150,6 +150,7 @@ class CustomerSerializer(serializers.ModelSerializer):
         model = Customer
         fields = ['email', 'phone_number']
 
+
 class FlightBookingSerializer(serializers.ModelSerializer):
     passenger = serializers.SerializerMethodField()  # Passenger details including ticket details
     contact_billings = serializers.SerializerMethodField()
@@ -176,9 +177,26 @@ class FlightBookingSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         """
-        Dynamically remove fields with null values from the output.
+        Dynamically adjust the output based on pnr_decoded_data availability.
+        If pnr_decoded_data exists, exclude one-way and round-trip flight details.
+        Also remove fields with null values.
         """
         representation = super().to_representation(instance)
+        
+        # Check if pnr_decoded_data is available and not empty
+        if instance.pnr_decoded_data and instance.pnr_decoded_data.strip():
+            # Remove one-way and round-trip flight details if pnr_decoded_data exists
+            fields_to_exclude = [
+                'flight_name',
+                'departure_iata',
+                'arrival_iata',
+                'departure_date',
+                'arrival_date',
+                'return_flight'
+            ]
+            for field in fields_to_exclude:
+                representation.pop(field, None)
+        
         # Remove keys where the value is null
         return {key: value for key, value in representation.items() if value is not None}
 
@@ -230,8 +248,8 @@ class FlightBookingSerializer(serializers.ModelSerializer):
             "premium_support": 5 if obj.premium_support else 0,
             "total_refund_protection": 100 if obj.total_refund_protection else 0,
             "total_amount": obj.payble_amount + (15 if obj.flight_cancellation_protection else 0) + 
-                             (2 if obj.sms_support else 0) + (15 if obj.baggage_protection else 0) + 
-                             (5 if obj.premium_support else 0) + (100 if obj.total_refund_protection else 0)
+                            (2 if obj.sms_support else 0) + (15 if obj.baggage_protection else 0) + 
+                            (5 if obj.premium_support else 0) + (100 if obj.total_refund_protection else 0)
         }
 
     def get_return_flight(self, obj):
@@ -253,12 +271,7 @@ class FlightBookingSerializer(serializers.ModelSerializer):
         return status_mapping.get(obj.status.lower(), "Pending")
 
     def get_flight_data(self, obj):
-        if (
-            obj.flight_name is None and
-            obj.departure_iata is None and
-            obj.arrival_iata is None and
-            obj.departure_date is None and
-            obj.arrival_date is None
-        ):
+        # Return pnr_decoded_data if it exists, otherwise None
+        if obj.pnr_decoded_data and obj.pnr_decoded_data.strip():
             return obj.pnr_decoded_data
         return None
