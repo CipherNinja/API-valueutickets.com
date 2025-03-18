@@ -261,6 +261,7 @@ class FlightBookingInline(admin.StackedInline):
 class CustomerAdmin(admin.ModelAdmin):
     inlines = [PassengerInline, PaymentInline, FlightBookingInline]
     list_display = (
+        'get_booking_id',
         'name', 
         'email', 
         'phone_number', 
@@ -278,6 +279,11 @@ class CustomerAdmin(admin.ModelAdmin):
     )
     search_fields = ('name', 'email', 'phone_number', 'bookings__booking_id', 'bookings__flight_name')
     list_filter = ('date',)
+
+    def get_booking_id(self, obj):
+        bookings = obj.bookings.all()
+        return ", ".join([b.booking_id for b in bookings if b.booking_id]) if bookings.exists() else "N/A"
+    get_booking_id.short_description = 'Booking ID'
 
     def get_payable_amount(self, obj):
         bookings = obj.bookings.all()
@@ -304,20 +310,15 @@ class CustomerAdmin(admin.ModelAdmin):
         return ", ".join([f"{b.ticket_cost}$" for b in bookings if b.ticket_cost]) if bookings.exists() else "N/A"
     get_ticket_cost.short_description = 'Ticket Cost'
 
-    def get_booking_status(self, obj):
-        bookings = obj.bookings.all()
-        return ", ".join([b.status for b in bookings if b.status]) if bookings.exists() else "N/A"
-    get_booking_status.short_description = 'Status'
-
     def get_customer_approval_status(self, obj):
         bookings = obj.bookings.all()
         return ", ".join([b.customer_approval_status for b in bookings if b.customer_approval_status]) if bookings.exists() else "N/A"
-    get_customer_approval_status.short_description = 'Approval Status'
+    get_customer_approval_status.short_description = 'Customer Approval'
 
     def get_agent(self, obj):
         bookings = obj.bookings.all()
         return ", ".join([b.agent.username for b in bookings if b.agent]) if bookings.exists() else "N/A"
-    get_agent.short_description = 'Agent'
+    get_agent.short_description = 'Assigned Agent'
 
     def get_passenger_count(self, obj):
         return obj.passengers.count()
@@ -326,6 +327,28 @@ class CustomerAdmin(admin.ModelAdmin):
     def get_payment_count(self, obj):
         return obj.payments.count()
     get_payment_count.short_description = 'Payment Count'
+
+    def get_booking_status(self, obj):
+        bookings = obj.bookings.all()
+        if not bookings.exists():
+            return "N/A"
+        
+        # Map statuses to Confirmed/Cancelled/Pending
+        status_map = {
+            'send ticket confirmed mail': 'Confirmed',
+            'booking completed ticket not sent': 'Confirmed',
+            'send ticket cancelled mail': 'Cancelled',
+            'refunded': 'Cancelled',
+        }
+        
+        # Get the simplified status for each booking
+        simplified_statuses = []
+        for booking in bookings:
+            simplified_status = status_map.get(booking.status, 'Pending')  # Default to Pending if not in map
+            simplified_statuses.append(simplified_status)
+        
+        return ", ".join(simplified_statuses)
+    get_booking_status.short_description = 'Status'
 
 
     class Media:
