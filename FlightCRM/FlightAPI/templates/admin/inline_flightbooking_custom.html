@@ -1,0 +1,31 @@
+<div class="form-row">
+    <!-- General Information -->
+    <h3>General Information</h3>
+    {{ inline_admin_formset.formset.management_form }}
+    {% for inline_admin_form in inline_admin_formset %}
+        {% for fieldset in inline_admin_form %}
+            <div class="fieldBox">
+                {{ fieldset }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+<!-- One Way Trip Section -->
+<div class="form-row">
+    <h3>One Way Trip</h3>
+    {{ inline_admin_formset.form.flight_name }}
+    {{ inline_admin_formset.form.departure_iata }}
+    {{ inline_admin_formset.form.arrival_iata }}
+    {{ inline_admin_formset.form.departure_date }}
+    {{ inline_admin_formset.form.arrival_date }}
+</div>
+
+<!-- Round Trip Section -->
+<div class="form-row">
+    <h3>Round Trip</h3>
+    {{ inline_admin_formset.form.return_departure_iata }}
+    {{ inline_admin_formset.form.return_arrival_iata }}
+    {{ inline_admin_formset.form.return_departure_date }}
+    {{ inline_admin_formset.form.return_arrival_date }}
+</div>

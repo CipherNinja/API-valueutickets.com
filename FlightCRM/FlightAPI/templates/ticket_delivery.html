@@ -35,8 +35,12 @@
             <p>Dear {{ customer_name }},</p>
             <p>We are pleased to confirm your flight booking. Below are the details:</p>
         </div>
+
         <div class="details">
             <h2>Flight Information</h2>
+            {% if pnr_decoded_data %}
+            <div>{{ pnr_decoded_data|safe }}</div>
+            {% else %}
             <table>
                 <tr>
                     <th>Flight Name</th>
@@ -68,7 +72,9 @@
                 </tr>
             </table>
             {% endif %}
+            {% endif %}
         </div>
+
         <div class="details">
             <h2>Traveller Information</h2>
             {% for ticket in tickets %}
@@ -96,18 +102,21 @@
             </table>
             {% endfor %}
         </div>
+
         <div class="details">
             <h2>Price Details</h2>
             <table>
                 <tr>
                     <th>Total Price</th>
-                    <td>${{ booking.payble_amount }}</td>
+                    <td>${{ payble_amount }}</td>
                 </tr>
             </table>
         </div>
+
         <div class="button-container">
             <a href="https://valueutickets.com/booking" class="button button-accept">View Booking</a>
         </div>
+
         <div class="footer">
             <div class="social-icons">
                 <a href="https://x.com"><i class="fab fa-twitter"></i></a>

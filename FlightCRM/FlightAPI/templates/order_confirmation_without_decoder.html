@@ -92,6 +92,7 @@
     </style>
 </head>
 <body>
+    
     <div class="container">
         <div class="header">
             <img src="https://valueutickets.com/assets/logo-nobg-6nxeXFvr.png" alt="Company Logo">
@@ -103,10 +104,49 @@
         </div>
         <div class="details">
             <h2>Flight Information:</h2>
-            <div>
-                {{ pnr_decoded_data|safe }}
-            </div>
             <table>
+                <tr>
+                    <th>Booking ID</th>
+                    <td>{{ booking_id }}</td>
+                </tr>
+                <tr>
+                    <th>Flight Name</th>
+                    <td>{{ flight_name }}</td>
+                </tr>
+                <tr>
+                    <th>Departure</th>
+                    <td>{{ departure_iata }}</td>
+                </tr>
+                <tr>
+                    <th>Arrival</th>
+                    <td>{{ arrival_iata }}</td>
+                </tr>
+                <tr>
+                    <th>Departure Date</th>
+                    <td>{{ departure_date }}</td>
+                </tr>
+                <tr>
+                    <th>Arrival Date</th>
+                    <td>{{ arrival_date }}</td>
+                </tr>
+                {% if return_departure_iata and return_arrival_iata and return_departure_date and return_arrival_date %}
+                <tr>
+                    <th>Return Departure</th>
+                    <td>{{ return_departure_iata }}</td>
+                </tr>
+                <tr>
+                    <th>Return Arrival</th>
+                    <td>{{ return_arrival_iata }}</td>
+                </tr>
+                <tr>
+                    <th>Return Departure Date</th>
+                    <td>{{ return_departure_date }}</td>
+                </tr>
+                <tr>
+                    <th>Return Arrival Date</th>
+                    <td>{{ return_arrival_date }}</td>
+                </tr>
+                {% endif %}
                 <tr>
                     <th>Total Amount</th>
                     <td>{{ payable_amount }} $</td>
@@ -124,13 +164,13 @@
                 </tr>
                 <tr>
                     <td>Login Url</td>
-                    <td><a href="https://valueutickets.com/booking">valueutickets.com/booking</a></td>
+                    <td><a href="https://valueutickets.com/booking">https://valueutickets.com/booking</a></td>
                 </tr>
             </table>
         </div>
-
+        
         <div class="content">
-            <p>You can track your flight ticket booking status online via <a href="https://valueutickets.com/booking">valueutickets.com</a>.</p>
+            <p>Track your flight ticket booking status online on <a href="https://valueutickets.com/booking">valueutickets.com</a> with correct login details.</p>
             <p>Our agent team will soon proceed with your application and will provide the necessary information as soon as possible.</p>
             <p>If you have any questions or need further assistance, please do not hesitate to contact our support team at support@valueutickets.com.</p>
         </div>

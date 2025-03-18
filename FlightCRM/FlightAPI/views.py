@@ -41,26 +41,35 @@ class FlightBookingCreateView(APIView):
 
 
 class LoginView(APIView):
-    r'''
-    {"booking_id":"VU2029000","email":"priyesh.kumarjii@gmail.com"}
-    '''
+
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
         booking_id = request.data.get('booking_id')
         
         if not email or not booking_id:
-            return Response({"error": "Please provide both email and booking ID"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Email and Booking ID are required fields."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         
         try:
-            customer = Customer.objects.get(email=email)
-            booking = FlightBooking.objects.get(booking_id=booking_id, customer=customer)
-        except Customer.DoesNotExist:
-            return Response({"error": "Customer does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            # Fetch the booking by booking_id and match its customer with the email
+            booking = FlightBooking.objects.get(booking_id=booking_id, customer__email=email)
         except FlightBooking.DoesNotExist:
-            return Response({"error": "Booking does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "No booking found for the provided Booking ID and email."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"An unexpected error occurred: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
         
+        # Serialize the booking details
         serializer = FlightBookingSerializer(booking)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
         
 
@@ -204,10 +213,10 @@ class CustomerResponseView(APIView):
 
         if customer_response == 'accept':
             booking.customer_approval_status = 'approved'
-            message = 'Autheticated Successfully'
+            message = 'Authenticated Successfully'
         elif customer_response == 'reject':
             booking.customer_approval_status = 'denied'
-            message = 'Authetication Rejected'
+            message = 'Authentication Rejected'
         else:
             message = 'Invalid Request & Permission Denied'
             return render(request, 'customerResponse.html', {'message': message})

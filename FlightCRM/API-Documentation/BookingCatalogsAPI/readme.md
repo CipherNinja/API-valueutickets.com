@@ -36,6 +36,11 @@ Content-Type: application/json
     "arrival_iata": "JFK",
     "departure_date": "2023-03-15T14:30:00Z",
     "arrival_date": "2023-03-15T20:30:00Z",
+    "arrival_date": "2023-03-15T20:30:00Z",
+    "return_departure_iata": "JFK",
+    "return_arrival_iata": "DEL",
+    "return_departure_date": "2023-03-25T10:00:00Z",
+    "return_arrival_date": "2023-03-25T16:00:00Z",
     "passenger": [
         {
             "first_name": "John",

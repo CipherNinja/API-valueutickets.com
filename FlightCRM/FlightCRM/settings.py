@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-xcfh484+^5mp8a%117h6kigwac1m8tso=f4p%84bqm5wpg$x3!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1','crm.valueutickets.com']
 
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rangefilter',
     'rest_framework_simplejwt',
+    'ckeditor',
 ]
 
 SIMPLE_JWT = {
@@ -62,6 +63,7 @@ SIMPLE_JWT = {
 }
 
 MIDDLEWARE = [
+    'FlightAPI.middlewares.mail_error_middleware.MailErrorMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -154,6 +156,17 @@ DATABASES = {
         'PASSWORD': 'airtravelove',  # Database password from environment variable
         'HOST': "localhost",  # Database host from environment variable
         'PORT': 3306,  
+    }
+}
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbarCanCollapse': True,
+        'toolbarStartupExpanded': False,
+        'height': 300,  # Adjust height (e.g., 300px or 30vh)
+        'width': '100%',  # Set width to 100% of the container
+        'toolbar': None,  # Optional: Remove toolbar if not needed
     }
 }
 

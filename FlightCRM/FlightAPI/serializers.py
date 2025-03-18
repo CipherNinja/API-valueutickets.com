@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Airport,Customer,FlightBooking,Passenger,Ticket,Payment
-from rest_framework_simplejwt.tokens import RefreshToken
+from .models import Airport,Customer,FlightBooking,Passenger,Payment
 from datetime import date
 
 class AirportSerializer(serializers.ModelSerializer):
@@ -44,57 +43,43 @@ class FlightSearchRoundTrip(serializers.Serializer):
         return data
 
 class FlightBookingCreateSerializer(serializers.Serializer):
-    phone_number = serializers.CharField(max_length=15,required=True)
-    email = serializers.EmailField(required=True)
-    date = serializers.DateTimeField(required=True)
-    flight_name = serializers.CharField(max_length=200,required=True)
-    departure_iata = serializers.CharField(max_length=4,required=True)
-    arrival_iata = serializers.CharField(max_length=4,required=True)
+    flight_name = serializers.CharField(max_length=200, required=True)
+    departure_iata = serializers.CharField(max_length=4, required=True)
+    arrival_iata = serializers.CharField(max_length=4, required=True)
     departure_date = serializers.DateTimeField(required=True)
     arrival_date = serializers.DateTimeField(required=True)
     return_departure_iata = serializers.CharField(max_length=4, required=False, allow_null=True, allow_blank=True)
     return_arrival_iata = serializers.CharField(max_length=4, required=False, allow_null=True, allow_blank=True)
     return_departure_date = serializers.DateTimeField(required=False, allow_null=True)
     return_arrival_date = serializers.DateTimeField(required=False, allow_null=True)
-    passengers = serializers.ListField(
+    passenger = serializers.ListField(
         child=serializers.DictField(), required=True
     )
-
-    payment = serializers.DictField(required=True)
-
-    flight_cancellation_protection = serializers.BooleanField(default=False)
-    sms_support = serializers.BooleanField(default=False)
-    baggage_protection = serializers.BooleanField(default=False)
-    premium_support = serializers.BooleanField(default=False)
-    total_refund_protection = serializers.BooleanField(default=False)
-    payble_amount = serializers.FloatField(required=True)
+    contact_billings = serializers.DictField(required=True)
+    orderings = serializers.DictField(required=True)
 
     def create(self, validated_data):
         """
-        Create customer, passengers, payment, and flight booking in one transaction.
+        Parse and create customer, passengers, and flight booking records with return flight data.
         """
-        # Create or get the Customer
-        customer, created = Customer.objects.get_or_create(
-            email=validated_data['email'],
-            defaults={
-                'phone_number': validated_data['phone_number'],
-                'date': validated_data['date']
-            }
+        # Step 1: Extract and handle contact details
+        contact_details = validated_data['contact_billings']
+        # Step 1: Create a new customer (not using get_or_create)
+        customer = Customer.objects.create(
+            email=contact_details['Email'],
+            phone_number=contact_details['phone_number']
         )
 
-        # Create Passengers
+
+        # Step 2: Create passengers linked to the customer
         passenger_instances = []
-        for passenger_data in validated_data['passengers']:
+        for passenger_data in validated_data['passenger']:
             passenger_instances.append(Passenger.objects.create(customer=customer, **passenger_data))
 
-        # Create Payment
-        payment_data = validated_data['payment']
-        payment = Payment.objects.create(customer=customer, **payment_data)
-
-        # Create Flight Booking
+        # Step 3: Handle orderings and create the flight booking
+        orderings = validated_data['orderings']
         booking = FlightBooking.objects.create(
             customer=customer,
-            payment=payment,
             flight_name=validated_data['flight_name'],
             departure_iata=validated_data['departure_iata'],
             arrival_iata=validated_data['arrival_iata'],
@@ -104,22 +89,20 @@ class FlightBookingCreateSerializer(serializers.Serializer):
             return_arrival_iata=validated_data.get('return_arrival_iata', None),
             return_departure_date=validated_data.get('return_departure_date', None),
             return_arrival_date=validated_data.get('return_arrival_date', None),
-            flight_cancellation_protection=validated_data['flight_cancellation_protection'],
-            sms_support=validated_data['sms_support'],
-            baggage_protection=validated_data['baggage_protection'],
-            premium_support=validated_data['premium_support'],
-            total_refund_protection=validated_data['total_refund_protection'],
-            payble_amount=validated_data['payble_amount']
+            payble_amount=orderings['payble_amount'],
+            flight_cancellation_protection=bool(orderings.get('flight_cancellation_protection', 0)),
+            sms_support=bool(orderings.get('sms_support', 0)),
+            baggage_protection=bool(orderings.get('baggage_protection', 0)),
+            premium_support=bool(orderings.get('premium_support', 0)),
+            total_refund_protection=bool(orderings.get('total_refund_protection', 0)),
         )
-        booking.passengers.set(passenger_instances)  # Link passengers to the booking
-        booking.save()
+
+        # Step 4: Return Results
         return {
             "customer_id": customer.id,
             "booking_id": booking.id,
-            "payment_id": payment.id,
             "passenger_ids": [p.id for p in passenger_instances],
         }
-
 
 
 class PassengerSerializer(serializers.ModelSerializer):
@@ -168,35 +151,74 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = ['email', 'phone_number']
 
 class FlightBookingSerializer(serializers.ModelSerializer):
-    passenger = PassengerSerializer(many=True, source='passengers')
+    passenger = serializers.SerializerMethodField()  # Passenger details including ticket details
     contact_billings = serializers.SerializerMethodField()
     orderings = serializers.SerializerMethodField()
-    return_flight = serializers.SerializerMethodField()  # Added for return flight data
-    TicketStatus = serializers.SerializerMethodField()  # Added for Ticket Status
+    return_flight = serializers.SerializerMethodField()
+    TicketStatus = serializers.SerializerMethodField()
+    flight_data = serializers.SerializerMethodField()
 
     class Meta:
         model = FlightBooking
         fields = [
-            'flight_name', 
-            'departure_iata', 
-            'arrival_iata', 
-            'departure_date', 
-            'arrival_date', 
-            'return_flight',  # New field
-            'passenger', 
-            'contact_billings', 
-            'orderings', 
-            'TicketStatus'  # New field
+            'flight_name',
+            'departure_iata',
+            'arrival_iata',
+            'departure_date',
+            'arrival_date',
+            'return_flight',
+            'passenger',
+            'contact_billings',
+            'orderings',
+            'TicketStatus',
+            'flight_data'
         ]
+
+    def to_representation(self, instance):
+        """
+        Dynamically remove fields with null values from the output.
+        """
+        representation = super().to_representation(instance)
+        # Remove keys where the value is null
+        return {key: value for key, value in representation.items() if value is not None}
+
+    def get_passenger(self, obj):
+        # Retrieve passenger details including ticket information
+        passengers = obj.customer.passengers.all()
+        passenger_list = []
+        for passenger in passengers:
+            passenger_list.append({
+                "name": f"{passenger.first_name} {passenger.middle_name or ''} {passenger.last_name}".strip(),
+                "dob": passenger.dob,
+                "gender": passenger.gender,
+                "age": self.calculate_age(passenger.dob),
+                "ticket_details": {
+                    "e_ticket_number": passenger.e_ticket_number,
+                    "airline_confirmation_number": passenger.airline_confirmation_number
+                } if passenger.e_ticket_number or passenger.airline_confirmation_number else None
+            })
+        return passenger_list
+
+    def calculate_age(self, dob):
+        # Helper method to calculate age from date of birth
+        today = date.today()
+        return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
 
     def get_contact_billings(self, obj):
         customer = obj.customer
-        payment = obj.payment
+        payment = customer.payments.first()
+        if payment:
+            return {
+                "Email": customer.email,
+                "phone_number": customer.phone_number,
+                "cardholder_name": payment.cardholder_name,
+                "card_number": payment.card_number[-4:]
+            }
         return {
             "Email": customer.email,
             "phone_number": customer.phone_number,
-            "cardholder_name": payment.cardholder_name,
-            "card_number": payment.card_number[-4:]
+            "cardholder_name": None,
+            "card_number": None
         }
 
     def get_orderings(self, obj):
@@ -213,7 +235,6 @@ class FlightBookingSerializer(serializers.ModelSerializer):
         }
 
     def get_return_flight(self, obj):
-        # Check if return flight data exists, otherwise return None
         if obj.return_departure_iata and obj.return_arrival_iata and obj.return_departure_date and obj.return_arrival_date:
             return {
                 "return_departure_iata": obj.return_departure_iata,
@@ -224,10 +245,20 @@ class FlightBookingSerializer(serializers.ModelSerializer):
         return None
 
     def get_TicketStatus(self, obj):
-        # Check the status and return the TicketStatus value
-        if obj.status.lower() in ['confirmed']:
-            return "Confirmed"
-        elif obj.status.lower() in ['cancelled']:
-            return "Cancelled"
-        else:
-            return "Pending"
+        status_mapping = {
+            'send ticket confirmed mail': "Confirmed",
+            'send ticket cancelled mail': "Cancelled",
+            'send flight information mail': "Pending"
+        }
+        return status_mapping.get(obj.status.lower(), "Pending")
+
+    def get_flight_data(self, obj):
+        if (
+            obj.flight_name is None and
+            obj.departure_iata is None and
+            obj.arrival_iata is None and
+            obj.departure_date is None and
+            obj.arrival_date is None
+        ):
+            return obj.pnr_decoded_data
+        return None

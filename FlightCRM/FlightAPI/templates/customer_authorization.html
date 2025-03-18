@@ -37,6 +37,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -45,61 +46,164 @@
         </div>
         <div class="content">
             <p>Dear {{ first_name }},</p>
-            <p>We would like to inform you about some important changes to your flight booking. Below are the updated details:</p>
+            <p>We have an update regarding your flight booking. Below are the details for your review:</p>
         </div>
+        {% if flight_info.PNRDecodedData %}
+        <div>
+            <div class="details">
+                {{ flight_info.PNRDecodedData|safe }}
+                <table>
+                    <tr>
+                        <th>Total Fare</th>
+                        <td>{{ flight_info.TotalCost }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        {% else %}
         <div class="details">
+            <h3>Your Flight Details</h3>
             <table>
-                {% for field, value in changes.items %}
                 <tr>
-                    <th>{{ field }}</th>
-                    <td>{{ value }}</td>
+                    <th>Flight Name</th>
+                    <td>{{ flight_info.FlightName }}</td>
                 </tr>
-                {% endfor %}
+                <tr>
+                    <th>Departure IATA</th>
+                    <td>{{ flight_info.DepartureIATA }}</td>
+                </tr>
+                <tr>
+                    <th>Arrival IATA</th>
+                    <td>{{ flight_info.ArrivalIATA }}</td>
+                </tr>
+                <tr>
+                    <th>Departure Date</th>
+                    <td>{{ flight_info.DepartureDate }}</td>
+                </tr>
+                <tr>
+                    <th>Arrival Date</th>
+                    <td>{{ flight_info.ArrivalDate }}</td>
+                </tr>
+                {% if flight_info.ReturnDepartureIATA %}
+                <tr>
+                    <th>Return Departure IATA</th>
+                    <td>{{ flight_info.ReturnDepartureIATA }}</td>
+                </tr>
+                <tr>
+                    <th>Return Arrival IATA</th>
+                    <td>{{ flight_info.ReturnArrivalIATA }}</td>
+                </tr>
+                <tr>
+                    <th>Return Departure Date</th>
+                    <td>{{ flight_info.ReturnDepartureDate }}</td>
+                </tr>
+                <tr>
+                    <th>Return Arrival Date</th>
+                    <td>{{ flight_info.ReturnArrivalDate }}</td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <th>Total Cost</th>
+                    <td>{{ flight_info.TotalCost }}</td>
+                </tr>
             </table>
         </div>
+        {% endif %}
+
+        <div class="details">
+            <h3>Traveller Informations</h3>
+            {% if passenger_details %}
+                <table>
+                    <tbody>
+                        {% for passenger in passenger_details %}
+                            <tr>
+                                <th>Name:</th>
+                                <td>{{ passenger.FirstName }} {{ passenger.MiddleName }} {{ passenger.LastName }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date of Birth:</th>
+                                <td>{{ passenger.DateOfBirth }}</td>
+                            </tr>
+                            <tr>
+                                <th>Gender:</th>
+                                <td>{{ passenger.Gender }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No passenger details available.</p>
+            {% endif %}
+        </div>
+        
         <div class="content">
-            <p>Billing Details</p>
+            <h3>Billing Details</h3>
         </div>
-        <div class="credit-card">
-            <div class="cvv">CVV: {{ payment_details.cvv }}</div>
-            <div class="sim-card"></div>
-            <div class="card-number">**** **** **** {{ payment_details.card_number }}</div>
-            <div class="expiration">Expires {{ payment_details.card_expiry_month }}/{{ payment_details.card_expiry_year }}</div>
-            <div class="card-holder">{{ payment_details.cardholder_name }}</div>
-        </div>
+            <div class="credit-card" style="position: relative; background: linear-gradient(45deg, #000428, #004e92); color: white; padding: 20px; border-radius: 15px; max-width: 350px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);">
+                <!-- Yellow Square -->
+                <div style="position: absolute; top: 20px; right: 20px; width: 50px; height: 35px; background: gold; border-radius: 5px;"></div>
+                
+                <!-- Card Branding -->
+                <div style="position: absolute; top: 20px; left: 20px;">
+                    <h3 style="margin: 0; font-size: 18px;">Card Details</h3>
+                </div>
+                
+                <!-- Card Number -->
+                <div style="margin-top: 70px; font-size: 18px; letter-spacing: 3px; text-align: center;">**** **** **** {{ payment_details.CardNumber }}</div>
+                
+                <!-- Expiry Date and CVV -->
+                <div style="position: absolute; bottom: 20px; right: 20px; text-align: right; font-size: 14px;">
+                    <div><strong>Expires:</strong> {{ payment_details.CardExpiryMonth }}/{{ payment_details.CardExpiryYear }}</div>
+                    <div><strong>CVV:</strong> {{ payment_details.CVV }}</div>
+                </div>
+                
+                <!-- Cardholder Name -->
+                <div style="position: absolute; bottom: 20px; left: 20px; font-size: 16px;">
+                    {{ payment_details.CardholderName }}
+                </div>
+                
+                <!-- MasterCard Logo -->
+                <div style="position: absolute; bottom: 20px; right: 20px; display: flex; align-items: center;">
+                    <div style="width: 30px; height: 30px; background: #ff5f00; border-radius: 50%;"></div>
+                    <div style="width: 30px; height: 30px; background: #f79e1b; border-radius: 50%; margin-left: -10px;"></div>
+                </div>
+            </div>
         <div class="details">
             <table>
                 <tr>
                     <th>Billing Address</th>
-                    <td>{{ payment_details.address_line1 }}</td>
+                    <td>{{ payment_details.AddressLine1 }}</td>
+                </tr>
+                <tr>
+                    <th>Billing Address 2</th>
+                    <td>{{ payment_details.AddressLine2 }}</td>
                 </tr>
                 <tr>
                     <th>Country</th>
-                    <td>{{ payment_details.country }}</td>
+                    <td>{{ payment_details.Country }}</td>
                 </tr>
                 <tr>
                     <th>State</th>
-                    <td>{{ payment_details.state }}</td>
+                    <td>{{ payment_details.State }}</td>
                 </tr>
                 <tr>
                     <th>City</th>
-                    <td>{{ payment_details.city }}</td>
+                    <td>{{ payment_details.City }}</td>
                 </tr>
                 <tr>
                     <th>Postal Code</th>
-                    <td>{{ payment_details.postal_code }}</td>
+                    <td>{{ payment_details.PostalCode }}</td>
                 </tr>
             </table>
         </div>
         <div class="button-container">
-            <a href="https://crm.valueutickets.com/api/email/auth/resp/{{ booking_id }}/{{ customer_email }}/accept" class="button button-accept">Authorize Changes</a>
-            <a href="https://crm.valueutickets.com/api/email/auth/resp/{{ booking_id }}/{{ customer_email }}/reject" class="button button-decline">Decline Changes</a>
+            <a href="https://crm.valueutickets.com/api/email/auth/resp/{{ booking_id }}/{{ customer_email }}/accept" class="button button-accept">Authorize Booking</a>
+            <a href="https://crm.valueutickets.com/api/email/auth/resp/{{ booking_id }}/{{ customer_email }}/reject" class="button button-decline">Decline Booking</a>
         </div>
         <div class="content">
-            <p>By clicking on Authorize Changes button {{ first_name }} is Authorizing valueutickets to proceed for {{ first_name }}'s flight ticket payment.</p>
-            <p>We proceed the the payment in two transactions, however the amount will be same as mentioned in the email.</p>
-            <p>Please log in to your account to review the changes and confirm if required. If you have any questions or need further assistance, please do not hesitate to contact our support team at support@valueutickets.com.</p>
-            <p>With regards,<br>Valueu Tickets Team</p>
+            <p>By clicking "Authorize Booking," you authorize Valueu Tickets to proceed with the payment for your flight ticket booking.</p>
+            <p>If you have any questions, feel free to reach out to support@valueutickets.com.</p>
+            <p>Best regards,<br>The Valueu Tickets Team</p>
         </div>
         <div class="footer">
             <div class="social-icons">

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from datetime import date
+from ckeditor.fields import RichTextField
 
 class Airport(models.Model):
     city = models.CharField(max_length=255)
@@ -17,12 +18,16 @@ class Airport(models.Model):
 
 
 class Customer(models.Model):
-    phone_number = models.CharField(max_length=15,unique=True,blank=False)
-    email = models.EmailField(unique=True,blank=False)
-    date = models.DateTimeField()
+    phone_number = models.CharField(max_length=15,blank=False)
+    email = models.EmailField(blank=False)
+    name = models.CharField(max_length=255,blank=True,null=True)
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.email  # This will display the email address instead of the customer ID
+        return self.email
+    
+    class Meta:
+        verbose_name = "Flight Booking"
 
 
 class Passenger(models.Model):
@@ -32,9 +37,13 @@ class Passenger(models.Model):
     last_name = models.CharField(max_length=100)
     dob = models.DateField()
     gender = models.CharField(max_length=10)
+    # Ticket Information
+    airline_confirmation_number = models.CharField(max_length=300,blank=True,null=True)
+    e_ticket_number = models.CharField(max_length=300, unique=True,blank=True,null=True)
 
     def __str__(self):
-        booking_ids = self.flights.values_list('booking_id', flat=True)
+        # Fetch bookings through the Passenger's related Customer
+        booking_ids = self.customer.bookings.values_list('booking_id', flat=True)
         if booking_ids:
             booking_id_str = ', '.join(booking_ids)
         else:
@@ -50,6 +59,7 @@ class Passenger(models.Model):
                 months -= 1
             return f"{months} months"
         return f"{age} years"
+
 
 class Payment(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='payments')
@@ -102,63 +112,44 @@ class Payment(models.Model):
 
 class FlightBooking(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('confirmed', 'Confirmed'),
-        ('cancelled', 'Cancelled'),
-        ('c.auth request', 'C.Auth Request'),
-        ('in_progress', 'In Progress'),
-        ('on_hold', 'On Hold'),
-        ('completed', 'Completed'),
-        ('awaiting_payment', 'Awaiting Payment'),
+        ('send flight information mail', 'Send Flight Information Mail'),
+        ('send ticket confirmed mail', 'Send Ticket Confirmed Mail'),
+        ('send ticket cancelled mail', 'Send Ticket Cancelled Mail'),
+        ('Send Authorization Mail', 'Send Authorization Mail'),
+        ('booking completed ticket not sent', 'Booking Completed Ticket Not Sent'),
+        ('booking incompleted email not sent', 'Booking incomplete email don"t Sent'),
         ('refunded', 'Refunded'),
         ('rebooked', 'Rebooked'),
-        ('failed', 'Failed'),
+        ('booking failed', 'Booking Failed'),
     ]
     booking_id = models.CharField(max_length=12, unique=True, blank=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='bookings')
-    passengers = models.ManyToManyField(Passenger, related_name='flights')
-    payment = models.ForeignKey(Payment, on_delete=models.PROTECT,verbose_name="payment by")
+    flight_name = models.CharField(max_length=200,blank=True, null=True)
+    departure_iata = models.CharField(max_length=4, blank=True, null=True)
+    arrival_iata = models.CharField(max_length=4, blank=True, null=True)
+    departure_date = models.DateTimeField(blank=True, null=True)
+    arrival_date = models.DateTimeField(blank=True, null=True)
+    return_departure_iata = models.CharField(max_length=4, blank=True, null=True)
+    return_arrival_iata = models.CharField(max_length=4, blank=True, null=True)
+    return_departure_date = models.DateTimeField(blank=True, null=True)
+    return_arrival_date = models.DateTimeField(blank=True, null=True)
+    pnr_decoded_data = RichTextField(blank=True, help_text="Paste the PNR decoded data here")
     flight_cancellation_protection = models.BooleanField(default=False)
     sms_support = models.BooleanField(default=False)
     baggage_protection = models.BooleanField(default=False)
     premium_support = models.BooleanField(default=False)
     total_refund_protection = models.BooleanField(default=False)
-    payble_amount = models.FloatField(verbose_name="Payable amt.($)")
-    flight_name = models.CharField(max_length=200)
-    departure_iata = models.CharField(max_length=4)
-    arrival_iata = models.CharField(max_length=4)
-    departure_date = models.DateTimeField()
-    arrival_date = models.DateTimeField()
-    return_departure_iata = models.CharField(max_length=4, blank=True, null=True)
-    return_arrival_iata = models.CharField(max_length=4, blank=True, null=True)
-    return_departure_date = models.DateTimeField(blank=True, null=True)
-    return_arrival_date = models.DateTimeField(blank=True, null=True)
-    agent = models.ForeignKey(User,on_delete=models.CASCADE, related_name="user",default=1)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    # update_customer_about_changes = models.BooleanField(default=False)
-    customer_approval_status = models.CharField(max_length=20,choices=[('approved','Approved'),('denied','Denied'),("na","NA")],default='na')
+    payble_amount = models.FloatField(verbose_name="Total Cost", null=True, blank=True)
+    agent = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user", default=1)
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, verbose_name="Email Status", default='send flight information mail')
+    customer_approval_status = models.CharField(max_length=20, choices=[('approved', 'Approved'), ('denied', 'Denied'), ("na", "NA")], default='na')
+    net_mco = models.CharField(max_length=100,blank=True,verbose_name="Net MCO")
+    mco = models.CharField(max_length=100,blank=True,verbose_name="MCO")
+    issuance_fee = models.CharField(max_length=100,blank=True,verbose_name="Issuance Fees")
+    ticket_cost = models.CharField(max_length=100,blank=True,verbose_name="Ticket Fees")
 
     def __str__(self):
-        passenger_names = ', '.join([f"{p.first_name} {p.middle_name} {p.last_name}".replace("  ", " ") for p in self.passengers.all()])
         return f"{self.booking_id}"
 
-
-class Ticket(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='tickets')
-    pdf_file = models.FileField(upload_to='media/tickets/', help_text="Upload the PDF ticket for the customer.")
-    message = models.TextField(blank=True, null=True, help_text="Optional message to be sent with the ticket.")
-
-    def __str__(self):
-        return f"Ticket for {self.customer.email} - {self.pdf_file.name}"
-
-
-class SendTicket(models.Model):
-    booking = models.ForeignKey(FlightBooking, on_delete=models.CASCADE, related_name='tickets')
-    passenger = models.ForeignKey(Passenger, on_delete=models.CASCADE, related_name='tickets')
-    airline_confirmation_number = models.CharField(max_length=100)
-    e_ticket_number = models.CharField(max_length=100, unique=True)
-
-    def __str__(self):
-        return f"Ticket for {self.passenger.first_name} {self.passenger.last_name}"
 
 

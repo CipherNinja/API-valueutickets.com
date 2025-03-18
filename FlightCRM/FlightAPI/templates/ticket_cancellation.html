@@ -1,0 +1,42 @@
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+    <div style="width: 80%; margin: 20px auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); border-top: 4px solid #1E90FF;">
+        <div style="text-align: center; padding: 20px 0; background-color: #F08080; color: #ffffff; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+            <img src="https://valueutickets.com/assets/logo-nobg-6nxeXFvr.png" alt="Company Logo" style="max-width: 150px;">
+            <h1 style="margin: 0; font-size: 24px;">Flight Ticket Cancellation</h1>
+        </div>
+        <div style="margin: 20px 0;">
+            <p>Dear {{ customer_email }},</p>
+            <p>Your request to cancel your flight ticket has been received. To verify your cancellation and access your booking details, please log in using the credentials below:</p>
+        </div>
+        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; color: #333;">
+            <tr style="background-color: #f4f4f4;">
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Details</th>
+                <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Information</th>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">Booking ID</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ booking_id }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">Email ID</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">{{ customer_email }}</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px; border: 1px solid #ddd;">Login URL</td>
+                <td style="padding: 10px; border: 1px solid #ddd;">
+                    <a href="https://valueutickets.com/booking" style="color: #1E90FF;">valueutickets.com/booking</a>
+                </td>
+            </tr>
+        </table>
+        <div style="margin: 20px 0;">
+            <p>If you have any questions or need assistance, our customer support team is here to help.</p>
+            <p>Thank you for choosing Valueu Tickets. We appreciate your understanding and look forward to assisting you in the future.</p>
+        </div>
+        <div style="background-color: #1E90FF; color: #ffffff; text-align: center; padding: 20px; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+            <p style="margin: 0;">Warm regards,</p>
+            <p style="margin: 0;">Customer Support Team</p>
+            <p style="margin: 0;">Valueu Tickets</p>
+            <p style="margin: 0; color: #F08080;">Email: customerservice@valueutickets.com</p>
+        </div>
+    </div>
+</body>
