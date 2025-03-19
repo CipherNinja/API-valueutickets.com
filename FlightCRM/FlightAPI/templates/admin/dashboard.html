@@ -5,68 +5,93 @@
 
 {% block extrastyle %}
     <style>
-        /* FlightAPI/static/css/dashboard.css */
-.container-fluid {
-    padding: 20px;
-}
+        /* Custom styles to match the screenshot */
+        .container-fluid {
+            padding: 10px 15px; /* Reduced padding */
+        }
 
-.card {
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
+        h1 {
+            font-size: 1.5rem; /* Smaller title */
+            margin: 10px 0; /* Reduced margin */
+        }
 
-.card-header {
-    font-weight: bold;
-    font-size: 1.1rem;
-}
+        .card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px; /* Reduced margin */
+        }
 
-.card-body {
-    padding: 15px;
-}
+        .card-header {
+            font-weight: bold;
+            font-size: 0.9rem; /* Smaller font */
+            padding: 5px 10px; /* Reduced padding */
+            background-color: #343a40; /* Dark header background */
+            color: white;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
 
-.card-body h5 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-}
+        .card-body {
+            padding: 10px; /* Reduced padding */
+        }
 
-.card-body a {
-    font-size: 0.9rem;
-}
+        .card-body h5 {
+            font-size: 1.2rem; /* Smaller font for values */
+            margin: 0;
+        }
 
-.bg-info {
-    background-color: #17a2b8 !important;
-}
+        .bg-info {
+            background-color: #17a2b8 !important;
+        }
 
-.bg-success {
-    background-color: #28a745 !important;
-}
+        .bg-success {
+            background-color: #28a745 !important;
+        }
 
-.bg-primary {
-    background-color: #007bff !important;
-}
+        .bg-primary {
+            background-color: #007bff !important;
+        }
 
-.bg-warning {
-    background-color: #ff8c00 !important;
-}
+        .bg-warning {
+            background-color: #ff8c00 !important;
+        }
 
-.bg-danger {
-    background-color: #dc3545 !important;
-}
+        .bg-danger {
+            background-color: #dc3545 !important;
+        }
 
-.table {
-    margin-bottom: 0;
-}
+        .table {
+            margin-bottom: 0;
+            font-size: 0.9rem; /* Smaller font for table */
+        }
 
-.table th, .table td {
-    vertical-align: middle;
-}
+        .table th, .table td {
+            vertical-align: middle;
+            padding: 5px; /* Reduced padding */
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px; /* Fixed height for chart */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .card-body h5 {
+                font-size: 1rem;
+            }
+
+            .card-header {
+                font-size: 0.8rem;
+            }
+        }
     </style>
 {% endblock %}
 
 {% block content %}
     <div class="container-fluid">
-        <h1 class="mt-4">Dashboard</h1>
+        <h1 class="mt-4">Performance Dashboard</h1>
         <p>Welcome to the ValueuTickets CRM Dashboard!</p>
 
         <!-- First Row: Bookings, META Net MCO, PPC Net MCO, Total Net MCO -->
