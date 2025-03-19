@@ -13,4 +13,7 @@ urlpatterns = [
     path('api/v2/flight/booking/', views.FlightBookingCreateView.as_view(), name='flight-booking-create'),
     path('api/email/auth/resp/<str:booking_id>/<str:email_id>/<str:customer_response>', views.CustomerResponseView.as_view(), name='customer_response'),
     path('api/login/', views.LoginView.as_view(), name='login'),
+    
+
+
 ]

@@ -241,9 +241,10 @@ JAZZMIN_SETTINGS = {
     "user_avatar": None,
     "custom_css": "css/custom.css",
 
-    # UI Customizations
+    # Add custom menu link for Dashboard
     "topmenu_links": [
-        # Define other links here
+        {"name": "Dashboard", "url": "admin_dashboard", "icon": "fas fa-tachometer-alt"},
+        # Add other links here if needed
     ],
     "icons": {
         "FlightAPI.Airport": "fas fa-road",

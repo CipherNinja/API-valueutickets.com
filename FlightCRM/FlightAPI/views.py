@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render
 from rest_framework import viewsets
 from .serializers import AirportSerializer, FlightSearchSerializer,FlightBookingCreateSerializer,FlightBookingSerializer,FlightSearchRoundTrip
 from .models import Airport,Customer,FlightBooking,Passenger,Payment
@@ -7,13 +7,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 import os
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 import requests
-from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import authenticate
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.models import User
+from django.db.models import Sum, Count, Q
+
 
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
@@ -237,3 +236,106 @@ def custom_403_view(request, exception):
 def custom_400_view(request, exception):
     return render(request, 'Errors/400_Bad_Request.html', status=400)
 
+
+
+# FlightAPI/views.py
+from django.shortcuts import render
+from django.contrib.admin.views.decorators import staff_member_required
+from .models import FlightBooking
+from django.contrib.auth.models import User
+from django.db.models import Count, Q
+
+@staff_member_required
+def admin_dashboard(request):
+    # Determine the agent filter based on the logged-in user
+    if request.user.is_superuser:
+        agent_filter = {}  # Superusers see all data
+    else:
+        agent_filter = {'agent': request.user}  # Agents see only their data
+
+    # Total bookings assigned to the agent
+    total_bookings = FlightBooking.objects.filter(**agent_filter).count()
+
+    # Confirmed bookings (status: 'send ticket confirmed mail' or 'booking completed ticket not sent')
+    confirmed_bookings = FlightBooking.objects.filter(
+        Q(status__in=['send ticket confirmed mail', 'booking completed ticket not sent']),
+        **agent_filter
+    )
+    confirmed_count = confirmed_bookings.count()
+
+    # Bookings on hold (status: 'booking incompleted email not sent')
+    bookings_on_hold = FlightBooking.objects.filter(
+        status='booking incompleted email not sent',
+        **agent_filter
+    ).count()
+
+    # META Net MCO: Sum of net_mco for confirmed bookings
+    meta_net_mco = 0
+    for booking in confirmed_bookings:
+        if booking.net_mco and booking.net_mco.replace('.', '', 1).lstrip('-').isdigit():
+            meta_net_mco += float(booking.net_mco)
+
+    # PPC Net MCO (static as per requirement)
+    ppc_net_mco = 0
+
+    total_net_mco = meta_net_mco
+
+    # META MCO: Sum of mco for confirmed bookings
+    meta_mco = 0
+    for booking in confirmed_bookings:
+        if booking.mco and booking.mco.replace('.', '', 1).lstrip('-').isdigit():
+            meta_mco += float(booking.mco)
+
+    # PPC MCO (static as per requirement)
+    ppc_mco = 0
+
+    # Total MCO: Sum of mco for confirmed bookings (same as meta_mco since ppc_mco is 0)
+    total_mco = meta_mco
+
+    # Agent Performance Data (for graph and table)
+    agent_performance = User.objects.filter(
+        user__isnull=False,  # Using the correct reverse relation 'user'
+        **({} if request.user.is_superuser else {'id': request.user.id})
+    ).annotate(
+        confirmed_count=Count('user', filter=Q(
+            user__status__in=['send ticket confirmed mail', 'booking completed ticket not sent']
+        ))
+    ).values('username', 'confirmed_count')
+
+    # Manually calculate total_mco for each agent since mco is a CharField
+    agent_performance_list = []
+    for agent in agent_performance:
+        agent_bookings = FlightBooking.objects.filter(
+            agent__username=agent['username'],
+            status__in=['send ticket confirmed mail', 'booking completed ticket not sent']
+        )
+        total_mco = 0
+        for booking in agent_bookings:
+            if booking.mco and booking.mco.replace('.', '', 1).lstrip('-').isdigit():
+                total_mco += float(booking.mco)
+        agent_performance_list.append({
+            'username': agent['username'],
+            'total_mco': total_mco,
+            'confirmed_count': agent['confirmed_count']
+        })
+
+    # Prepare data for the graph (agent names and MCOs)
+    agent_names = [agent['username'] for agent in agent_performance_list]
+    agent_mcos = [float(agent['total_mco']) for agent in agent_performance_list]
+
+    context = {
+        "title": "Dashboard",
+        "total_bookings": total_bookings,
+        "confirmed_bookings": confirmed_count,
+        "bookings_on_hold": bookings_on_hold,
+        "meta_net_mco": meta_net_mco,
+        "ppc_net_mco": ppc_net_mco,
+        "total_net_mco": total_net_mco,
+        "meta_mco": meta_mco,
+        "ppc_mco": ppc_mco,
+        "total_mco": total_mco,
+        "agent_performance": agent_performance_list,
+        "agent_names": agent_names,
+        "agent_mcos": agent_mcos,
+    }
+    return render(request, "admin/dashboard.html", context)

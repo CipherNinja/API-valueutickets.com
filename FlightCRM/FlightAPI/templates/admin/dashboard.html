@@ -1,0 +1,234 @@
+{% extends "admin/base_site.html" %}
+{% load static jazzmin %}
+
+{% block title %}{{ title }} | ValueuTickets CRM{% endblock %}
+
+{% block extrastyle %}
+    <style>
+        /* FlightAPI/static/css/dashboard.css */
+.container-fluid {
+    padding: 20px;
+}
+
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-body h5 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.card-body a {
+    font-size: 0.9rem;
+}
+
+.bg-info {
+    background-color: #17a2b8 !important;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+}
+
+.bg-primary {
+    background-color: #007bff !important;
+}
+
+.bg-warning {
+    background-color: #ff8c00 !important;
+}
+
+.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <h1 class="mt-4">Dashboard</h1>
+        <p>Welcome to the ValueuTickets CRM Dashboard!</p>
+
+        <!-- First Row: Bookings, META Net MCO, PPC Net MCO, Total Net MCO -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-header">Bookings</div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ confirmed_bookings }}/{{ total_bookings }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">META Net MCO</div>
+                    <div class="card-body">
+                        <h5 class="card-title">${{ meta_net_mco|floatformat:2 }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">PPC Net MCO</div>
+                    <div class="card-body">
+                        <h5 class="card-title">${{ ppc_net_mco|floatformat:2 }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-header">Total Net MCO</div>
+                    <div class="card-body">
+                        <h5 class="card-title">${{ total_net_mco|floatformat:2 }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Row: Bookings on Hold, META MCO, PPC MCO, Total MCO -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card text-white bg-danger mb-3">
+                    <div class="card-header">Bookings on Hold</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Total: {{ bookings_on_hold }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">META MCO</div>
+                    <div class="card-body">
+                        <h5 class="card-title">${{ meta_mco|floatformat:2 }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">PPC MCO</div>
+                    <div class="card-body">
+                        <h5 class="card-title">${{ ppc_mco|floatformat:2 }}</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning mb-3">
+                    <div class="card-header">Total MCO</div>
+                    <div class="card-body">
+                        <h5 class="card-title">${{ total_mco|floatformat:2 }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Third Row: Agent Performance Graph and Agent List -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-3">
+                    <div class="card-header">Agent Performance Graph</div>
+                    <div class="card-body">
+                        <canvas id="agentPerformanceChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-header">Agent List with Performance</div>
+                    <div class="card-body">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Agent Name</th>
+                                    <th>MCO</th>
+                                    <th>Bookings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for agent in agent_performance %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ agent.username }}</td>
+                                        <td>${{ agent.total_mco|default:0|floatformat:2 }}</td>
+                                        <td>{{ agent.confirmed_count }}</td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4">No agents found.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Agent Performance Chart
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('agentPerformanceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: {{ agent_names|safe }},
+                    datasets: [{
+                        label: 'MCO ($)',
+                        data: {{ agent_mcos|safe }},
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',  // Horizontal bar chart
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'MCO ($)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Agent'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
