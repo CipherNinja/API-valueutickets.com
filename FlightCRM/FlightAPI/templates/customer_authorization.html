@@ -196,14 +196,14 @@
                 </tr>
             </table>
         </div>
-        <div class="button-container">
-            <a href="https://crm.valueutickets.com/api/email/auth/resp/{{ booking_id }}/{{ customer_email }}/accept" class="button button-accept">Authorize Booking</a>
-            <a href="https://crm.valueutickets.com/api/email/auth/resp/{{ booking_id }}/{{ customer_email }}/reject" class="button button-decline">Decline Booking</a>
-        </div>
         <div class="content">
             <p>By clicking "Authorize Booking," you authorize Valueu Tickets to proceed with the payment for your flight ticket booking.</p>
             <p>If you have any questions, feel free to reach out to support@valueutickets.com.</p>
             <p>Best regards,<br>The Valueu Tickets Team</p>
+        </div>
+        <div class="button-container">
+            <a href="https://crm.valueutickets.com/api/email/auth/resp/{{ booking_id }}/{{ customer_email }}/accept" class="button button-accept">Click to Authorize</a>
+            <!-- <a href="https://crm.valueutickets.com/api/email/auth/resp/{{ booking_id }}/{{ customer_email }}/reject" class="button button-decline">Decline Booking</a> -->
         </div>
         <div class="footer">
             <div class="social-icons">

@@ -42,17 +42,37 @@ WORKFLOW_ORDER = [
 @receiver(post_save, sender=FlightBooking, dispatch_uid="send_correct_email")
 def send_correct_email_on_status_change(sender, instance, created, **kwargs):
     # Handle new bookings
-    if created and instance.status == 'send flight information mail':
-        print(f"New booking created: {instance.booking_id} with status {instance.status}")
-        send_flight_information_email(instance)
-        print(f"Email triggered: send flight information mail for {instance.booking_id} (new booking)")
+    if created:
+        if instance.status == 'send flight information mail':
+            print(f"New booking created: {instance.booking_id} with status {instance.status}")
+            send_flight_information_email(instance)
+            print(f"Email triggered: send flight information mail for {instance.booking_id} (new booking)")
+        elif instance.status == 'Send Authorization Mail':
+            print(f"New booking created: {instance.booking_id} with status {instance.status}")
+            send_authorization_email(instance)
+            print(f"Email triggered: Send Authorization Mail for {instance.booking_id} (new booking)")
         return
 
-    # Handle status changes for existing bookings
-    if not hasattr(instance, 'previous_status') or instance.previous_status == instance.status:
-        print(f"Post-save: No status change detected for {instance.booking_id}")
+    # Handle updates to existing bookings
+    if not hasattr(instance, 'previous_status'):
+        # If previous_status isn't set (e.g., first save after adding the attribute), fetch it
+        try:
+            previous_instance = FlightBooking.objects.get(pk=instance.pk)
+            instance.previous_status = previous_instance.status
+        except FlightBooking.DoesNotExist:
+            instance.previous_status = None
+
+    if instance.previous_status == instance.status:
+        # If status hasn't changed but is 'Send Authorization Mail', send email
+        if instance.status == 'Send Authorization Mail':
+            print(f"Post-save: No status change, but triggering authorization email for {instance.booking_id}")
+            send_authorization_email(instance)
+            print(f"Email triggered: Send Authorization Mail for {instance.booking_id} (no status change)")
+        else:
+            print(f"Post-save: No status change detected for {instance.booking_id}")
         return
 
+    # Handle status changes
     print(f"Post-save: Status changed for {instance.booking_id} from {instance.previous_status} to {instance.status}")
 
     status_order = WORKFLOW_ORDER
@@ -81,24 +101,27 @@ def send_correct_email_on_status_change(sender, instance, created, **kwargs):
     else:
         print(f"No email defined for status: {current_status}")
 
-@receiver(post_save, sender=Customer, dispatch_uid="send_booking_update")
+@receiver(post_save, sender=FlightBooking, dispatch_uid="send_booking_update")
 def send_booking_update_email(sender, instance, **kwargs):
-    flight_bookings = instance.bookings.filter(status='Send Authorization Mail')
-    for booking in flight_bookings:
-        # Fetch the latest booking instance to ensure status is current
-        current_booking = FlightBooking.objects.get(pk=booking.pk)
-        if hasattr(current_booking, 'previous_status') and current_booking.previous_status != current_booking.status:
-            print(f"Skipping authorization email for {booking.booking_id} due to status change from {current_booking.previous_status} to {current_booking.status}")
-            continue
-        print(f"Customer update: Triggering authorization email for {booking.booking_id}")
-        send_authorization_email(booking)
-        print(f"Customer update: Authorization email sent for {booking.booking_id}")
+    # instance is the FlightBooking object being saved
+    if instance.status == 'Send Authorization Mail':
+        # Check if status has changed (using previous_status)
+        if hasattr(instance, 'previous_status') and instance.previous_status != instance.status:
+            print(f"Skipping authorization email for {instance.booking_id} due to status change from {instance.previous_status} to {instance.status}")
+            return
+        
+        print(f"Booking update: Triggering authorization email for {instance.booking_id}")
+        send_authorization_email(instance)
+        print(f"Booking update: Authorization email sent for {instance.booking_id}")
+    else:
+        print(f"Booking update: No authorization email needed for {instance.booking_id} (status: {instance.status})")
 
 def send_flight_information_email(instance):
     if instance:
         subject = f"Booking Confirmation - {instance.booking_id}"
         from_email = "customerservice@valueutickets.com"
         to_email = [instance.customer.email]
+        bcc_email = ["customerservice@valueutickets.com"]
         template_name = 'order_confirmation.html' if instance.pnr_decoded_data else 'order_confirmation_without_decoder.html'
         context = {
             'customer_email': instance.customer.email,
@@ -120,15 +143,17 @@ def send_flight_information_email(instance):
             'payable_amount': instance.payble_amount,
         }
         html_content = render_to_string(template_name, context)
+        text_content = strip_tags(html_content)
         try:
-            send_mail(
+            email = EmailMultiAlternatives(
                 subject=subject,
-                message=strip_tags(html_content),
+                body=text_content,
                 from_email=from_email,
-                recipient_list=to_email,
-                fail_silently=False,
-                html_message=html_content
+                to=to_email,
+                bcc=bcc_email,
             )
+            email.attach_alternative(html_content, "text/html")
+            email.send(fail_silently=False)
             instance.email_message = f"Success: Flight info email sent for {instance.booking_id}"
             print(instance.email_message)
         except Exception as e:
@@ -160,6 +185,7 @@ def send_agent_assignment_email(sender, instance, created, **kwargs):
             body='',
             from_email='customerservice@valueutickets.com',  # Fixed empty from_email
             to=[agent.email],
+            bcc=['customerservice@valueutickets.com'],
         )
         email.attach_alternative(html_content, "text/html")
         try:
