@@ -104,6 +104,7 @@ EMAIL_USE_TLS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:7008",  # Allow Vue app to access API
     "https://valueutickets.com",
+    "https://www.valueutickets.com",
     "http://valueutickets.com"
 ]
 
@@ -243,7 +244,7 @@ JAZZMIN_SETTINGS = {
 
     # Add custom menu link for Dashboard
     "topmenu_links": [
-        {"name": "Dashboard", "url": "admin_dashboard", "icon": "fas fa-tachometer-alt"},
+        {"name": "Performance", "url": "admin_dashboard", "icon": "fas fa-tachometer-alt"},
         # Add other links here if needed
     ],
     "icons": {
