@@ -120,7 +120,8 @@ class CustomerAdmin(admin.ModelAdmin):
         'get_issuance_fee', 
         'get_ticket_cost', 
         'get_booking_status', 
-        'get_customer_approval_status', 
+        'get_customer_approval_status',
+        'get_customer_approval_datetime',
         'get_agent', 
         'get_passenger_count', 
         'get_payment_count',
@@ -163,6 +164,14 @@ class CustomerAdmin(admin.ModelAdmin):
         bookings = obj.bookings.all()
         return ", ".join([b.customer_approval_status for b in bookings if b.customer_approval_status]) if bookings.exists() else "N/A"
     get_customer_approval_status.short_description = 'Customer Approval'
+
+    def get_customer_approval_datetime(self, obj):
+        bookings = obj.bookings.all()
+        return ", ".join([
+            b.customer_approval_datetime.strftime('%Y-%m-%d %H:%M:%S') 
+            for b in bookings if b.customer_approval_datetime
+        ]) if bookings.exists() and any(b.customer_approval_datetime for b in bookings) else "Not authenticated"
+    get_customer_approval_datetime.short_description = 'Authenticated At'
 
     def get_agent(self, obj):
         bookings = obj.bookings.all()
