@@ -143,6 +143,7 @@ class FlightBooking(models.Model):
     agent = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user", default=1)
     status = models.CharField(max_length=100, choices=STATUS_CHOICES, verbose_name="Email Status", default='send flight information mail')
     customer_approval_status = models.CharField(max_length=20, choices=[('approved', 'Approved'), ('denied', 'Denied'), ("na", "NA")], default='na')
+    customer_approval_datetime = models.DateTimeField(verbose_name="Authenticated At")
     net_mco = models.CharField(max_length=100,blank=True,verbose_name="Net MCO")
     mco = models.CharField(max_length=100,blank=True,verbose_name="MCO")
     issuance_fee = models.CharField(max_length=100,blank=True,verbose_name="Issuance Fees")
@@ -153,3 +154,25 @@ class FlightBooking(models.Model):
 
 
 
+class AgentFeedback(models.Model):
+    customer = models.ForeignKey(
+        'Customer',
+        on_delete=models.CASCADE,
+        related_name='agent_feedbacks'
+    )
+    agent = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='feedbacks_given'
+    )
+    note = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback by {self.agent.username if self.agent else 'Unknown'} for {self.customer.email} on {self.created_at}"
+
+    class Meta:
+        verbose_name = "Agent Feedback"
+        verbose_name_plural = "Agent Feedbacks"
+        ordering = ['-created_at']  # Latest feedback first

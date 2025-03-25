@@ -12,7 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 from django.db.models import Sum, Count, Q
-
+from django.utils.timezone import now
 
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
@@ -212,9 +212,11 @@ class CustomerResponseView(APIView):
 
         if customer_response == 'accept':
             booking.customer_approval_status = 'approved'
+            booking.customer_approval_datetime = now()
             message = 'Authenticated Successfully'
         elif customer_response == 'reject':
             booking.customer_approval_status = 'denied'
+            booking.customer_approval_datetime = now()
             message = 'Authentication Rejected'
         else:
             message = 'Invalid Request & Permission Denied'
@@ -237,12 +239,6 @@ def custom_400_view(request, exception):
     return render(request, 'Errors/400_Bad_Request.html', status=400)
 
 
-
-# FlightAPI/views.py
-from django.shortcuts import render
-from django.contrib.admin.views.decorators import staff_member_required
-from .models import FlightBooking
-from django.contrib.auth.models import User
 from django.db.models import Count, Q
 
 @staff_member_required

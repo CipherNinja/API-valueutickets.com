@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Customer, Passenger, Payment, FlightBooking, Airport
+from .models import Customer, Passenger, Payment, FlightBooking, Airport, AgentFeedback
+from django.contrib.auth.models import User
+from django.utils.html import format_html
 
 
 @admin.register(Airport)
@@ -25,9 +27,9 @@ class FlightBookingInline(admin.StackedInline):
     model = FlightBooking
     extra = 0  # Prevent extra blank entries
     show_change_link = True
-    readonly_fields = ('customer_approval_status', 'booking_id')
+    readonly_fields = ('customer_approval_status', 'customer_approval_datetime', 'booking_id')
     fields = (
-         'agent', 'status', 'customer_approval_status','booking_id', 'pnr_decoded_data', 'flight_name', 'arrival_iata', 'departure_iata', 'arrival_date', 'departure_date','return_arrival_iata', 'return_departure_iata', 'return_arrival_date', 'return_departure_date',
+         'agent', 'status', 'customer_approval_status','customer_approval_datetime','booking_id', 'pnr_decoded_data', 'flight_name', 'arrival_iata', 'departure_iata', 'arrival_date', 'departure_date','return_arrival_iata', 'return_departure_iata', 'return_arrival_date', 'return_departure_date',
         'flight_cancellation_protection', 'sms_support', 'baggage_protection',
         'premium_support', 'total_refund_protection', 'payble_amount',
         'net_mco', 'mco', 'issuance_fee', 'ticket_cost',
@@ -40,6 +42,68 @@ class FlightBookingInline(admin.StackedInline):
     class Media:
         css = {
             'all': ('custom.css',),  # Path to your custom CSS file
+        }
+
+# AgentFeedback Inline for Customer
+class AgentFeedbackInline(admin.TabularInline):
+    model = AgentFeedback
+    extra = 1
+    readonly_fields = ('created_at_display', 'agent_display')
+    fields = ('agent_display', 'note', 'created_at_display')
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.order_by('-created_at')
+
+    def save_model(self, request, obj, form, change):
+        print(f"Current user: {request.user}, Authenticated: {request.user.is_authenticated}")
+        if not change:  # Only set agent on creation
+            if request.user.is_authenticated:
+                obj.agent = request.user
+                print(f"Setting agent to {request.user.username} (ID: {request.user.id}) for feedback on {obj.customer.email}")
+            else:
+                print("User is not authenticated! Cannot set agent.")
+        super().save_model(request, obj, form, change)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "agent":
+            kwargs["initial"] = request.user
+            kwargs["queryset"] = User.objects.filter(id=request.user.id)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    def get_formset(self, request, obj=None, **kwargs):
+        formset = super().get_formset(request, obj, **kwargs)
+        # Store the request for use in agent_display
+        self.request = request
+
+        # Dynamically set readonly fields for each form in the formset
+        class DynamicFormset(formset):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                for form in self.forms:
+                    # Get the AgentFeedback instance for this form
+                    if form.instance and form.instance.pk:
+                        # If the agent of this feedback is not the current user, make the note readonly
+                        if form.instance.agent != request.user:
+                            form.fields['note'].widget.attrs['readonly'] = True
+                            form.fields['note'].widget.attrs['class'] = 'readonly-note'
+        return DynamicFormset
+
+    def agent_display(self, obj):
+        obj = AgentFeedback.objects.get(pk=obj.pk)
+        # Add a class to indicate if this is the current user's feedback
+        is_current_user = obj.agent == self.request.user if obj.agent else False
+        agent_name = obj.agent.username if obj.agent else "Unknown Agent"
+        return format_html('<span class="{}">{}</span>', 'current-user' if is_current_user else 'other-user', agent_name)
+    agent_display.short_description = "Agent"
+
+    def created_at_display(self, obj):
+        return obj.created_at.strftime('%B %d, %Y, %I:%M %p').replace('AM', 'a.m.').replace('PM', 'p.m.')
+    created_at_display.short_description = "Created at"
+
+    class Media:
+        css = {
+            'all': ('custom.css',),
         }
 
 @admin.register(Customer)
