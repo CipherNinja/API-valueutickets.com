@@ -205,6 +205,13 @@ class CustomerResponseView(APIView):
 
     def get(self, request, booking_id, email_id, customer_response):
         booking = get_object_or_404(FlightBooking, booking_id=booking_id, customer__email=email_id)
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            # Use the first IP in the X-Forwarded-For list (client's real IP)
+            ip = x_forwarded_for.split(',')[0].strip()
+        else:
+            # Fallback to REMOTE_ADDR if no proxy headers are present
+            ip = request.META.get('REMOTE_ADDR')
         
         if booking.customer_approval_status in ['approved', 'denied']:
             message = 'Link is Expired !'
@@ -213,10 +220,12 @@ class CustomerResponseView(APIView):
         if customer_response == 'accept':
             booking.customer_approval_status = 'approved'
             booking.customer_approval_datetime = now()
+            booking.customer_ip = ip
             message = 'Authenticated Successfully'
         elif customer_response == 'reject':
             booking.customer_approval_status = 'denied'
             booking.customer_approval_datetime = now()
+            booking.customer_ip = ip
             message = 'Authentication Rejected'
         else:
             message = 'Invalid Request & Permission Denied'

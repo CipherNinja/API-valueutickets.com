@@ -119,7 +119,8 @@ class CustomerAdmin(admin.ModelAdmin):
         'get_mco', 
         'get_issuance_fee', 
         'get_ticket_cost', 
-        'get_booking_status', 
+        'get_booking_status',
+        'get_customer_ip',
         'get_customer_approval_status',
         'get_customer_approval_datetime',
         'get_agent', 
@@ -172,6 +173,11 @@ class CustomerAdmin(admin.ModelAdmin):
             for b in bookings if b.customer_approval_datetime
         ]) if bookings.exists() and any(b.customer_approval_datetime for b in bookings) else "Not authenticated"
     get_customer_approval_datetime.short_description = 'Authenticated At'
+
+    def get_customer_ip(self, obj):
+        bookings = obj.bookings.all()
+        return ", ".join([b.customer_ip for b in bookings if b.customer_ip]) if bookings.exists() else "N/A"
+    get_customer_ip.short_description = 'Customer IP'
 
     def get_agent(self, obj):
         bookings = obj.bookings.all()

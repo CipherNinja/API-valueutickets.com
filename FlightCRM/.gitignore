@@ -17,3 +17,13 @@ static/
 staticfiles/jazzmin/
 staticfiles/rest_framework/
 staticfiles/vendor/
+staticfiles/ckeditor/*
+staticfiles/admin/js/cancel.js
+staticfiles/admin/js/popup_response.js
+staticfiles/assets/
+staticfiles/favicon.ico
+staticfiles/index.html
+
+# IDE and environment files
+.idea/
+env/
