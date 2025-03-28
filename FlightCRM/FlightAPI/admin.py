@@ -171,8 +171,8 @@ class CustomerAdmin(admin.ModelAdmin):
         return ", ".join([
             b.customer_approval_datetime.strftime('%Y-%m-%d %H:%M:%S') 
             for b in bookings if b.customer_approval_datetime
-        ]) if bookings.exists() and any(b.customer_approval_datetime for b in bookings) else "Not authenticated"
-    get_customer_approval_datetime.short_description = 'Authenticated At'
+        ]) if bookings.exists() and any(b.customer_approval_datetime for b in bookings) else "Waiting"
+    get_customer_approval_datetime.short_description = 'Authrization Timing'
 
     def get_customer_ip(self, obj):
         bookings = obj.bookings.all()
@@ -212,7 +212,7 @@ class CustomerAdmin(admin.ModelAdmin):
             simplified_statuses.append(simplified_status)
         
         return ", ".join(simplified_statuses)
-    get_booking_status.short_description = 'Status'
+    get_booking_status.short_description = 'Ticket Status'
 
 
     class Media:
