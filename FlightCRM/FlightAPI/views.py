@@ -200,18 +200,64 @@ class FlightRoundTrip(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+
+def send_authentication_email(booking, message):
+    """
+    Sends an email acknowledgment for customer authentication response.
+    """
+    # Fetch the associated customer and payment
+    customer = booking.customer
+    payment = customer.payments.first()  # Assuming the first payment is used for this purpose
+    
+    # Prepare email data
+    email_data = {
+        'booking_number': booking.booking_id,
+        'auth_status': booking.customer_approval_status.capitalize(),
+        'acknowledge_date': booking.customer_approval_datetime.strftime('%b, %d %Y %H:%M:%S') if booking.customer_approval_datetime else 'N/A',
+        'total_amount': f"USD ${booking.payble_amount}" if booking.payble_amount else 'N/A',
+        'card_holder_name': payment.cardholder_name if payment else 'N/A',
+        'card_ending': payment.card_number[-4:] if payment else 'N/A',
+        'customer_email': customer.email,
+        'pf_number': booking.customer_ip if booking.customer_ip else 'N/A',
+        'authorization_text': (
+            f"I {payment.cardholder_name if payment else 'the cardholder'} hereby authorize ValueU Tickets./ Air Tickets / Airlines and associated suppliers "
+            f"to charge a total of USD ${booking.payble_amount if booking.payble_amount else '0.00'} from my card ending with \"{payment.card_number[-4:] if payment else 'N/A'}\"."
+        ),
+        'ticket_issuance': 'Ticket will be issued in 4-5 hrs.',
+        'response_message': message, 
+    }
+    
+    # Render HTML email content
+    html_message = render_to_string('authentication_acknowledgement.html', email_data)
+    subject = f"Authentication Acknowledgment - {booking.customer_approval_status.capitalize()} - Valueu Tickets"
+    from_email = 'customerservice@valueutickets.com'
+    to_email = 'customerservice@valueutickets.com'
+
+    # Send the email
+    try:
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body=html_message,
+            from_email=from_email,
+            to=[to_email],
+        )
+        email.attach_alternative(html_message, "text/html")
+        email.send(fail_silently=False)
+    except Exception as e:
+        # Log email sending errors
+        print(f"Failed to send email: {e}")
+
 
 class CustomerResponseView(APIView):
 
     def get(self, request, booking_id, email_id, customer_response):
         booking = get_object_or_404(FlightBooking, booking_id=booking_id, customer__email=email_id)
+        
+        # Retrieve client IP
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            # Use the first IP in the X-Forwarded-For list (client's real IP)
-            ip = x_forwarded_for.split(',')[0].strip()
-        else:
-            # Fallback to REMOTE_ADDR if no proxy headers are present
-            ip = request.META.get('REMOTE_ADDR')
+        ip = x_forwarded_for.split(',')[0].strip() if x_forwarded_for else request.META.get('REMOTE_ADDR')
         
         if booking.customer_approval_status in ['approved', 'denied']:
             message = 'Link is Expired !'
@@ -231,7 +277,15 @@ class CustomerResponseView(APIView):
             message = 'Invalid Request & Permission Denied'
             return render(request, 'customerResponse.html', {'message': message})
 
+        # Set a flag to indicate that the signal should skip sending emails
+        booking._skip_signal_emails = True
         booking.save()
+
+        # Send the acknowledgment email
+        print(f"Authetication Reply: Payment Auth email Initiated for {booking.booking_id}")
+        send_authentication_email(booking, message)
+        print(f"Authetication Reply: Payment Auth email sent for {booking.booking_id}")
+
         return render(request, 'customerResponse.html', {'message': message})
 
 

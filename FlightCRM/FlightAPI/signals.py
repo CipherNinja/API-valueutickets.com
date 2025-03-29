@@ -41,6 +41,11 @@ WORKFLOW_ORDER = [
 
 @receiver(post_save, sender=FlightBooking, dispatch_uid="send_correct_email")
 def send_correct_email_on_status_change(sender, instance, created, **kwargs):
+    # Check if the update should skip signal-based emails
+    if getattr(instance, '_skip_signal_emails', False):
+        print(f"Skipping signal-based emails for Booking ID {instance.booking_id} due to _skip_signal_emails flag")
+        return
+    
     # Handle new bookings
     if created:
         if instance.status == 'send flight information mail':
@@ -103,6 +108,12 @@ def send_correct_email_on_status_change(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=FlightBooking, dispatch_uid="send_booking_update")
 def send_booking_update_email(sender, instance, **kwargs):
+
+    # Check if the update should skip signal-based emails
+    if getattr(instance, '_skip_signal_emails', False):
+        print(f"Skipping booking update email for Booking ID {instance.booking_id} due to _skip_signal_emails flag")
+        return
+    
     # instance is the FlightBooking object being saved
     if instance.status == 'Send Authorization Mail':
         # Check if status has changed (using previous_status)
@@ -341,3 +352,5 @@ def send_ticket_cancelled_mail(instance):
         print(f"Ticket cancelled email sent to {to} for Booking ID {instance.booking_id} from send_ticket_cancelled_mail")
     except Exception as e:
         print(f"Error sending ticket cancelled email for Booking ID {instance.booking_id}: {e}")
+
+
