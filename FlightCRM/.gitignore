@@ -1,29 +1,49 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-FlightAPI/__pycache__/
-FlightAPI/migrations/__pycache__/
-FlightCRM/__pycache__/
+# Ignore IDE and environment files
+.idea/
+env/
+../.idea/
+../env/
 
-# Migration files
-*/migrations/*.py
-!*/migrations/__init__.py
-
-
-# Database
-db.sqlite3
-
-# Static files
-static/
-staticfiles/jazzmin/
-staticfiles/rest_framework/
-staticfiles/vendor/
-staticfiles/ckeditor/*
+# Ignore static files
+staticfiles/css/
 staticfiles/admin/js/cancel.js
 staticfiles/admin/js/popup_response.js
 staticfiles/assets/
 staticfiles/favicon.ico
 staticfiles/index.html
 
-# IDE and environment files
-.idea/
-env/
+# Ignore deleted assets
+staticfiles/assets/Cancun_D-CzcIZclO.jpg
+staticfiles/assets/London_D-1QqlQ2eU.jpg
+staticfiles/assets/Paris_D-BZSdz2A_.jpg
+staticfiles/assets/city-CwHD5ha_.jpg
+staticfiles/assets/dark-CvzvR33Q.jpg
+staticfiles/assets/index-BKErwiMB.js
+staticfiles/assets/index-CAzrTbU8.css
+staticfiles/assets/japan_D-BIF96pp2.jpg
+staticfiles/assets/logo-nobg-6nxeXFvr.png
+staticfiles/assets/maxico_D-BVaLLZSc.jpg
+staticfiles/assets/mountainn-BJdtQJ9M.png
+staticfiles/assets/plane-DAQi9Ugy.jpg
+staticfiles/favicon.ico
+staticfiles/index.html
+
+# Ignore compiled Python files
+__pycache__/
+FlightAPI/__pycache__/
+FlightAPI/migrations/__pycache__/
+FlightCRM/__pycache__/
+
+# Ignore migrations
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# Ignore database
+db.sqlite3
+
+# Ignore additional static files
+static/
+staticfiles/jazzmin/
+staticfiles/rest_framework/
+staticfiles/vendor/
+staticfiles/ckeditor/*

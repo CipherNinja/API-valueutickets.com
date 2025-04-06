@@ -130,9 +130,9 @@ def send_booking_update_email(sender, instance, **kwargs):
 def send_flight_information_email(instance):
     if instance:
         subject = f"Booking Confirmation - {instance.booking_id}"
-        from_email = "customerservice@valueutickets.com"
+        from_email = "customersupport@valueutickets.com"
         to_email = [instance.customer.email]
-        bcc_email = ["customerservice@valueutickets.com"]
+        bcc_email = ["customersupport@valueutickets.com"]
         template_name = 'order_confirmation.html' if instance.pnr_decoded_data else 'order_confirmation_without_decoder.html'
         context = {
             'customer_email': instance.customer.email,
@@ -194,9 +194,9 @@ def send_agent_assignment_email(sender, instance, created, **kwargs):
         email = EmailMultiAlternatives(
             subject=email_subject,
             body='',
-            from_email='customerservice@valueutickets.com',  # Fixed empty from_email
+            from_email='customersupport@valueutickets.com',  # Fixed empty from_email
             to=[agent.email],
-            bcc=['customerservice@valueutickets.com'],
+            bcc=['customersupport@valueutickets.com'],
         )
         email.attach_alternative(html_content, "text/html")
         try:
@@ -254,7 +254,7 @@ def get_payment_details(customer):
 
 def send_authorization_email(booking):
     subject = 'Authorization Required for Your Flight Booking Updates'
-    from_email = 'customerservice@valueutickets.com'
+    from_email = 'customersupport@valueutickets.com'
     to_email = [booking.customer.email]
     flight_info = get_flight_info(booking)
     payment_details = get_payment_details(booking.customer)
@@ -270,7 +270,7 @@ def send_authorization_email(booking):
     text_content = 'Please review and authorize the details for your flight booking.'
     html_content = render_to_string('customer_authorization.html', context)
     try:
-        msg = EmailMultiAlternatives(subject, text_content, from_email, to_email, bcc=["customerservice@valueutickets.com"])
+        msg = EmailMultiAlternatives(subject, text_content, from_email, to_email, bcc=["customersupport@valueutickets.com"])
         msg.attach_alternative(html_content, "text/html")
         msg.send()
         print(f"Authorization email sent to {to_email} for Booking ID {booking.booking_id} from send_authorization_email")
@@ -323,12 +323,12 @@ def send_ticket_confirmation(instance):
                 'return_arrival_airport': return_arrival_airport,
             }
     subject = 'Your Flight Booking Confirmation & Details'
-    from_email = 'customerservice@valueutickets.com'
+    from_email = 'customersupport@valueutickets.com'
     to = instance.customer.email
     html_content = render_to_string('ticket_delivery.html', context)
     text_content = strip_tags(html_content)
     try:
-        msg = EmailMultiAlternatives(subject, text_content, from_email, [to], bcc=["customerservice@valueutickets.com"])
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [to], bcc=["customersupport@valueutickets.com"])
         msg.attach_alternative(html_content, "text/html")
         msg.send()
         print(f"Ticket confirmation email sent for Booking ID: {instance.booking_id} from send_ticket_confirmation")
@@ -337,7 +337,7 @@ def send_ticket_confirmation(instance):
 
 def send_ticket_cancelled_mail(instance):
     subject = 'Confirm Your Flight Ticket Cancellation'
-    from_email = 'customerservice@valueutickets.com'
+    from_email = 'customersupport@valueutickets.com'
     to = instance.customer.email
     context = {
         'booking_id': instance.booking_id,
@@ -346,7 +346,7 @@ def send_ticket_cancelled_mail(instance):
     html_content = render_to_string('ticket_cancellation.html', context)
     text_content = strip_tags(html_content)
     try:
-        msg = EmailMultiAlternatives(subject, text_content, from_email, [to], bcc=["customerservice@valueutickets.com"])
+        msg = EmailMultiAlternatives(subject, text_content, from_email, [to], bcc=["customersupport@valueutickets.com"])
         msg.attach_alternative(html_content, "text/html")
         msg.send()
         print(f"Ticket cancelled email sent to {to} for Booking ID {instance.booking_id} from send_ticket_cancelled_mail")

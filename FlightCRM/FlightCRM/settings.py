@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-xcfh484+^5mp8a%117h6kigwac1m8tso=f4p%84bqm5wpg$x3!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','crm.valueutickets.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','crm.valueutickets.com','www.crm.valueutickets.com']
 
 # Set timezone to Eastern Standard Time (EST)
 TIME_ZONE = 'America/New_York'
@@ -90,14 +90,14 @@ SECURE_HSTS_PRELOAD = True
 X_FRAME_OPTIONS = 'DENY'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.valueutickets.com'
+EMAIL_HOST = 'smtp.hostinger.com'
 EMAIL_PORT = 465  
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'customerservice@valueutickets.com'
-EMAIL_HOST_PASSWORD = r"}(UM93%Y(5T^" 
-DEFAULT_FROM_EMAIL = 'customerservice@valueutickets.com'
-# Set EMAIL_USE_TLS = False since you're using SSL (port 465)
+EMAIL_HOST_USER = 'customersupport@valueutickets.com'
+EMAIL_HOST_PASSWORD = 'Abhinandan@3012'
+DEFAULT_FROM_EMAIL = 'customersupport@valueutickets.com'
 EMAIL_USE_TLS = False
+
 
 
 

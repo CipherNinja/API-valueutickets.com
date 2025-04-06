@@ -232,8 +232,8 @@ def send_authentication_email(booking, message):
     # Render HTML email content
     html_message = render_to_string('authentication_acknowledgement.html', email_data)
     subject = f"Authentication Acknowledgment - {booking.customer_approval_status.capitalize()} - Valueu Tickets"
-    from_email = 'customerservice@valueutickets.com'
-    to_email = 'customerservice@valueutickets.com'
+    from_email = 'customersupport@valueutickets.com'
+    to_email = 'customersupport@valueutickets.com'
 
     # Send the email
     try:
