@@ -113,7 +113,8 @@ class CustomerAdmin(admin.ModelAdmin):
         'get_booking_id',
         'name', 
         'email', 
-        'phone_number', 
+        'phone_number',
+        'get_card_type',
         'get_payable_amount', 
         'get_net_mco', 
         'get_mco', 
@@ -213,6 +214,14 @@ class CustomerAdmin(admin.ModelAdmin):
         
         return ", ".join(simplified_statuses)
     get_booking_status.short_description = 'Ticket Status'
+
+    def get_card_type(self, obj):
+        # Get the first payment associated with the customer
+        payment = obj.payments.first()
+        if payment:
+            return payment.get_card_type()  # Uses the get_card_type method from Payment model
+        return "N/A"
+    get_card_type.short_description = 'Card Type'
 
 
     class Media:
